@@ -1,0 +1,15 @@
+# Private notes and local config
+DESIGN-PLAN.md
+.claude/
+
+# Image-rendering sources, screenshots and headless browser profiles (not part of the site)
+tools/
+
+# Reference images are never published
+inspiration/
+
+# Instagram renders live outside the published site
+instagram/
+
+# Private playbook for future projects
+WEB-SHOWCASE-PLAYBOOK.md

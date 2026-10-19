@@ -1,0 +1,1687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pocket Pawns: a chess game room design concept</title>
+<meta name="description" content="Pocket Pawns is a design concept for a casual chess game room. Turn on Show requests to see, one step at a time, what each button would ask a real server.">
+<!-- Link preview (Instagram DMs and other apps read these). Absolute URLs point at the GitHub Pages site. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://seanthompsonjr.github.io/pocket-pawns/">
+<meta property="og:site_name" content="Pocket Pawns (design concept)">
+<meta property="og:title" content="Pocket Pawns: a chess game room design concept">
+<meta property="og:description" content="Pocket Pawns is a design concept for a casual chess game room. Turn on Show requests to see, one step at a time, what each button would ask a real server.">
+<meta property="og:image" content="https://seanthompsonjr.github.io/pocket-pawns/images/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pocket Pawns design concept: toy chess pieces popping out of a jeans pocket, next to the line See what each button asks the server.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#EDECE8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M32 78Q34 60 42 54L58 54Q66 60 68 78Z' fill='%23FF7A3D' stroke='%23161616' stroke-width='6' stroke-linejoin='round'/%3E%3Crect x='34' y='46' width='32' height='10' rx='5' fill='%23FF7A3D' stroke='%23161616' stroke-width='6'/%3E%3Ccircle cx='50' cy='32' r='15' fill='%23FF7A3D' stroke='%23161616' stroke-width='6'/%3E%3Crect x='18' y='76' width='64' height='16' rx='8' fill='%23FF7A3D' stroke='%23161616' stroke-width='6'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#EDECE8; --card:#FFFFFF; --ink:#161616; --muted:#5A5750; --faint:#A8A49B;
+  --coral:#E8304A; --coral-deep:#C81E3A; --sky:#135F99; --sky-soft:#7CC0F0; --sky-wash:#E3EEF7;
+  --plum:#6E1E4A; --tangerine:#FF7A3D; --mint:#8FD9B6; --yolk:#FFD84D;
+  --sq-light:#FBFAF7; --sq-dark:#D8D4CA;
+  --pc-w:#FF7A3D; --pc-b:#6E1E4A;
+  --display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+  --line:3px; --shadow:5px 5px 0 var(--ink);
+  --r-board:24px; --r-panel:18px; --r-chip:8px;
+  --gutter:16px; --max:1120px;
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --header-h:104px;               /* replaced by the real height in JS */
+  --chrome:312px;                 /* space the player bars, status and buttons need around the board */
+  --dock-w:clamp(380px,31vw,470px);
+}
+body[data-set="coconut"]{--pc-w:#FAF8F3; --pc-b:#135F99}
+body[data-set="mint"]{--pc-w:#8FD9B6; --pc-b:#C81E3A}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth; scroll-padding-top:calc(var(--header-h) + 8px); -webkit-text-size-adjust:100%}
+body{margin:0; background:var(--paper); color:var(--ink); font:400 1.0625rem/1.55 var(--body); overflow-x:hidden}
+img,svg{display:block; max-width:100%}
+a{color:inherit; text-underline-offset:3px; text-decoration-thickness:2px}
+button,input{font:inherit; color:inherit}
+button{cursor:pointer; touch-action:manipulation}
+h1,h2,h3,h4{margin:0; line-height:1.15}
+p{margin:0}
+:focus-visible{outline:3px solid var(--ink); outline-offset:3px}
+.on-dark :focus-visible, .on-dark:focus-visible{outline-color:var(--yolk)}
+.sr-only{position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0}
+.wrap{width:100%; max-width:calc(var(--max) + var(--gutter)*2); margin-inline:auto; padding-inline:var(--gutter)}
+@media (min-width:768px){:root{--gutter:24px}}
+@media (min-width:1800px){:root{--max:1400px}}
+
+.skip{position:absolute; left:16px; top:-100px; z-index:100; background:var(--yolk); border:var(--line) solid var(--ink); padding:10px 16px; border-radius:999px; font-weight:700}
+.skip:focus{top:12px}
+
+.sample{display:inline-block; font:700 .75rem/1.2 var(--body); color:var(--coral-deep); background:var(--card); border:2px solid var(--coral-deep); border-radius:6px; padding:2px 6px; transform:rotate(-3deg); vertical-align:middle; white-space:nowrap}
+
+/* Concept banner */
+.concept{background:var(--ink); color:var(--paper); font-size:.9375rem}
+.concept .wrap{display:flex; flex-wrap:wrap; align-items:center; gap:4px 16px; padding-block:6px}
+.concept summary{list-style:none; cursor:pointer; min-height:44px; display:inline-flex; align-items:center; gap:8px; font-weight:700; text-decoration:underline; text-underline-offset:3px}
+.concept summary::-webkit-details-marker{display:none}
+.concept summary::after{content:""; width:8px; height:8px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(45deg) translateY(-2px); transition:transform .2s}
+.concept details[open] summary::after{transform:rotate(-135deg)}
+.concept details{flex:1 1 100%}
+@media (min-width:700px){.concept details{flex:0 1 auto}}
+.concept .more{padding:4px 0 14px; max-width:68ch}
+.concept .more p+p{margin-top:8px}
+.link-btn{margin-top:10px; min-height:44px; padding:6px 14px; border:2px solid var(--paper); border-radius:999px; background:transparent; color:var(--paper); font-weight:700}
+
+/* Header */
+.site-head{position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:var(--line) solid var(--ink)}
+.site-head .wrap{display:grid; grid-template-columns:1fr auto; grid-template-areas:"brand tools" "nav nav"; align-items:center; gap:2px 12px; padding-block:6px}
+.brand{grid-area:brand; display:inline-flex; align-items:center; gap:8px; white-space:nowrap; font:800 clamp(.875rem,3.6vw,1.0625rem)/1 var(--display); text-decoration:none; min-height:44px; letter-spacing:-.01em}
+.brand svg{width:30px; height:30px; flex:none}
+@media (max-width:399px){.brand .brand-txt{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}}
+.site-head nav{grid-area:nav}
+.nav{display:flex; gap:4px; margin:0 -10px; padding:0; list-style:none}
+.nav a{display:inline-flex; align-items:center; min-height:44px; padding:0 10px; font-weight:700; text-decoration:none; border-radius:999px}
+.nav a:hover{background:var(--card)}
+.tools{grid-area:tools; display:flex; align-items:center; gap:10px}
+@media (min-width:860px){
+  .site-head .wrap{grid-template-columns:auto 1fr auto; grid-template-areas:"brand nav tools"; padding-block:8px}
+  .nav{justify-content:center; margin:0}
+}
+
+.switch{display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:4px 6px 4px 12px; border:var(--line) solid var(--ink); border-radius:999px; background:var(--card); font-weight:800; box-shadow:3px 3px 0 var(--ink); transition:transform .15s, box-shadow .15s}
+.switch:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink)}
+.switch .track{position:relative; width:46px; height:26px; border:2px solid var(--ink); border-radius:999px; background:var(--paper); transition:background .2s; flex:none}
+.switch .knob{position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:var(--ink); transition:transform .25s var(--ease-spring)}
+.switch[aria-checked="true"] .track{background:var(--sky)}
+.switch[aria-checked="true"] .knob{transform:translateX(20px); background:var(--card); box-shadow:0 0 0 2px var(--ink)}
+.switch .lbl-short{display:none}
+@media (max-width:479px){.switch .lbl-long{display:none} .switch .lbl-short{display:inline}}
+.counter{display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:28px; padding:0 7px; border-radius:999px; background:var(--ink); color:var(--card); font:700 .875rem/1 var(--body); font-variant-numeric:tabular-nums; flex:none}
+.counter.bump{animation:bump .3s var(--ease-spring)}
+@keyframes bump{50%{transform:scale(1.25)}}
+.pin{display:none; align-items:center; gap:8px; min-height:44px; padding:6px 14px; border:var(--line) solid var(--ink); border-radius:999px; background:var(--card); font-weight:800}
+.pin .pin-ico{width:20px; height:16px; border:2px solid var(--ink); border-radius:4px; background:linear-gradient(90deg,var(--ink) 0 38%,transparent 38%)}
+.pin[aria-pressed="true"]{background:var(--sky); color:#fff}
+.pin[aria-pressed="true"] .pin-ico{border-color:#fff; background:linear-gradient(90deg,#fff 0 38%,transparent 38%)}
+@media (min-width:1200px){body.reqs .pin{display:inline-flex}}
+
+/* Buttons */
+.btn{position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:10px 20px; border:var(--line) solid var(--ink); border-radius:999px; background:var(--card); color:var(--ink); font-weight:800; line-height:1.2; text-decoration:none; text-align:center; box-shadow:4px 4px 0 var(--ink); transition:transform .15s ease-out, box-shadow .15s ease-out, background .15s}
+.btn:hover{background:#F6F5F1}
+.btn:active{transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink)}
+.btn.primary{background:var(--yolk)}
+.btn.primary:hover{background:#FFE172}
+.btn.danger{color:var(--coral-deep); border-color:var(--coral-deep); box-shadow:4px 4px 0 var(--coral-deep)}
+.btn.small{min-height:44px; padding:8px 16px; font-size:.9375rem}
+.btn[disabled]{opacity:.45; cursor:not-allowed; box-shadow:2px 2px 0 var(--ink); transform:none}
+/* request tag: sits inside the button, readable at a glance */
+.method{display:none; flex:none; padding:3px 7px; font:700 .8125rem/1.1 var(--mono); letter-spacing:.02em; color:#fff; background:var(--sky); border:2px solid var(--ink); border-radius:6px}
+.method.local{color:var(--ink); background:var(--card); border-style:dashed; font-family:var(--body); font-weight:800}
+body.reqs .method{display:inline-block}
+.sec-head .load-chip{display:none; margin-top:12px; width:fit-content; max-width:100%; padding:5px 10px; font:400 .875rem/1.4 var(--mono); color:#fff; background:var(--sky); border:2px solid var(--ink); border-radius:var(--r-chip); overflow-wrap:anywhere}
+.load-chip b{font-weight:700}
+body.reqs .sec-head .load-chip{display:block}
+
+/* Layout shell: optional dock on the left */
+.shell{display:block}
+.content{container:page / inline-size; min-width:0}
+.dock{display:none}
+body.dock-on .shell{display:grid; grid-template-columns:var(--dock-w) minmax(0,1fr)}
+body.dock-on .dock{display:flex; flex-direction:column; position:sticky; top:var(--header-h); height:calc(100vh - var(--header-h)); overflow:auto; background:var(--card); border-right:var(--line) solid var(--ink); align-self:start}
+
+/* Sections */
+main{display:block}
+section{padding-block:56px}
+@container page (min-width:900px){section{padding-block:80px}}
+.sec-head{max-width:60ch; margin-bottom:24px}
+.sec-head h2{font:800 clamp(1.75rem,4.2vw,2.75rem)/1.08 var(--display); letter-spacing:-.02em}
+.sec-head p{margin-top:12px; color:var(--muted)}
+
+/* Hero */
+.hero{position:relative; padding-block:28px 56px; overflow:hidden}
+.giant{position:absolute; z-index:0; font:800 clamp(8rem,30cqw,27rem)/.8 var(--display); color:#fff; letter-spacing:-.04em; pointer-events:none; user-select:none}
+.giant.e2{left:-2cqw; bottom:6%}
+.giant.e4{right:-2cqw; top:4%}
+.hero .wrap{position:relative; z-index:1; display:grid; gap:20px; align-items:center}
+@container page (min-width:860px){
+  .hero{padding-block:48px 88px}
+  .hero .wrap{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); gap:24px}
+}
+.hero h1{font-family:var(--display)}
+.h1-name{display:flex; align-items:center; gap:10px; font:800 1rem/1.2 var(--body); letter-spacing:.01em; margin-bottom:18px}
+.h1-name svg{width:26px; height:26px; flex:none}
+.h1-line{display:block; font-weight:800; font-size:clamp(2.2rem,6.4cqw,5.1rem); line-height:.98; letter-spacing:-.035em; max-width:9.5em}
+.h1-line .stop{margin-right:-.28em}
+.hero-intro{margin-top:22px; max-width:42ch; font-size:1.1875rem}
+.hero-ctas{display:flex; flex-wrap:wrap; gap:28px 16px; margin-top:28px; align-items:center}
+.bubble::after{content:""; position:absolute; left:28px; bottom:-14px; width:18px; height:18px; background:var(--yolk); border-right:var(--line) solid var(--ink); border-bottom:var(--line) solid var(--ink); transform:rotate(45deg) skew(8deg,8deg); border-bottom-right-radius:4px; box-shadow:3px 3px 0 var(--ink)}
+.bubble:active::after{box-shadow:none}
+.hero-art{position:relative; max-width:540px; width:100%; margin-inline:auto}
+.hero-art svg{width:100%; height:auto; overflow:visible}
+.sticker{position:absolute; width:clamp(96px,14cqw,150px); aspect-ratio:1; left:0; top:2%; transform:rotate(-12deg); z-index:2}
+.sticker svg{width:100%; height:100%; overflow:visible}
+.sticker text{font:800 21px var(--display); fill:#fff}
+.replay{position:absolute; right:0; bottom:0}
+.pop{transform-box:fill-box; transform-origin:50% 100%; transform:translate(0,0) rotate(var(--r)) scale(1)}
+.hero-art.go .pop{animation:pop .9s var(--ease-spring) both; animation-delay:var(--d)}
+.hero-art.go .burst-lines{animation:fadein .4s ease-out .7s both}
+@keyframes pop{0%{transform:translate(var(--sx),var(--sy)) rotate(0deg) scale(.45); opacity:0} 15%{opacity:1} 100%{transform:translate(0,0) rotate(var(--r)) scale(1); opacity:1}}
+@keyframes fadein{from{opacity:0}}
+
+/* Game room */
+.room{display:grid; gap:28px; align-items:start}
+@container page (min-width:900px){.room{grid-template-columns:auto minmax(320px,1fr); gap:32px}}
+.play{display:grid; grid-template-columns:minmax(0,1fr); gap:8px; width:100%; max-width:clamp(244px, calc(100svh - var(--header-h) - var(--chrome)), 600px); margin-inline:auto}
+@container page (min-width:900px){.play{margin-inline:0; width:clamp(300px, min(calc(100svh - var(--header-h) - var(--chrome)), calc(100cqw - var(--gutter) * 2 - 352px)), 600px)}}
+.player{display:flex; align-items:center; gap:8px 10px; padding:4px 6px 4px 10px; min-height:48px; border:var(--line) solid var(--ink); border-radius:14px; background:var(--card)}
+.player .dot{width:20px; height:20px; border-radius:50%; border:var(--line) solid var(--ink); flex:none}
+.player .dot.w{background:var(--pc-w)} .player .dot.b{background:var(--pc-b)}
+.player .who{font-weight:800; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.player .clock{margin-left:auto; font:800 1.0625rem/1 var(--body); font-variant-numeric:tabular-nums; padding:7px 10px; border-radius:10px; border:2px solid var(--ink); background:var(--paper); flex:none}
+.player.turn .clock{background:var(--ink); color:var(--card)}
+.board-frame{position:relative; padding:6px 6px 20px 20px; border:var(--line) solid var(--ink); border-radius:var(--r-board); background:var(--card); box-shadow:var(--shadow)}
+.board{position:relative; aspect-ratio:1; border:var(--line) solid var(--ink); border-radius:10px; overflow:hidden; display:grid; grid-template-columns:repeat(8,1fr)}
+.sq{position:relative; background:var(--sq-light)}
+.sq.dk{background-color:var(--sq-dark); background-image:radial-gradient(rgba(22,22,22,.22) 1.2px, transparent 1.6px); background-size:7px 7px}
+.sq.hl::after{content:""; position:absolute; inset:0; background:rgba(232,48,74,.28)}
+.pieces{position:absolute; top:9px; right:9px; bottom:23px; left:23px; pointer-events:none}
+.pc{position:absolute; top:0; left:0; width:12.5%; height:12.5%; display:grid; place-items:center; transition:transform .35s var(--ease-spring), opacity .25s}
+.pc svg{width:88%; height:88%; overflow:visible}
+.pc.gone{opacity:0}
+.pc.w{color:var(--pc-w)} .pc.b{color:var(--pc-b)}
+.coords{position:absolute; font:700 .75rem/1 var(--body); color:var(--muted); pointer-events:none}
+.coords.files{left:23px; right:9px; bottom:4px; display:grid; grid-template-columns:repeat(8,1fr); text-align:center}
+.coords.ranks{top:9px; bottom:23px; left:5px; display:grid; grid-template-rows:repeat(8,1fr); align-items:center}
+.status{min-height:2.9em; display:flex; align-items:center; padding:6px 12px; border-radius:12px; background:var(--card); border:2px solid var(--ink); font-weight:600; font-size:.9375rem; line-height:1.35}
+.play{container:play / inline-size}
+.controls{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 12px; margin-top:4px}
+@container play (min-width:470px){.controls{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.controls .btn{padding-inline:12px}
+body.reqs .controls .btn{flex-direction:column; gap:5px; padding-block:7px}
+
+/* Flip cards */
+.flipper{display:grid; min-width:0}
+.face{grid-area:1/1; min-width:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; transition:transform .42s cubic-bezier(.4,.1,.2,1), opacity .2s}
+.face.back{transform:perspective(1600px) rotateY(180deg)}
+.flipper.flipped .face.front{transform:perspective(1600px) rotateY(-180deg)}
+.flipper.flipped .face.back{transform:perspective(1600px) rotateY(0deg)}
+.panel{border:var(--line) solid var(--ink); border-radius:var(--r-panel); background:var(--card); box-shadow:var(--shadow); padding:20px}
+@container page (min-width:600px){.panel{padding:24px}}
+.panel h3{font:800 1.0625rem/1.2 var(--display); letter-spacing:-.01em}
+.panel .sub+.sub{margin-top:24px}
+
+.moves{margin:12px 0 0; padding:0; list-style:none; display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:6px 12px; font-variant-numeric:tabular-nums; min-height:3.2em}
+.moves li{display:flex; gap:8px}
+.moves .n{color:var(--muted); width:1.6em; text-align:right}
+.moves .m{font-weight:700; min-width:3.6em}
+.moves-empty{color:var(--muted); grid-column:1/-1}
+.resign-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:14px}
+.confirm{display:none; margin-top:14px; padding:14px; border:2px dashed var(--coral-deep); border-radius:12px}
+.confirm.open{display:block}
+.confirm p{font-weight:700; margin-bottom:12px}
+.chat-log{margin:12px 0 0; padding:0; list-style:none; display:grid; gap:6px; max-height:9.5em; overflow:auto}
+.chat-log li{padding:6px 10px; border-radius:12px; background:var(--paper); width:fit-content; max-width:100%; overflow-wrap:anywhere}
+.chat-log li.me{justify-self:end; background:var(--mint)}
+.chat-log b{font-weight:800}
+.chat-form{margin-top:12px}
+.chat-row{display:flex; gap:10px; align-items:flex-end}
+.field{display:grid; gap:6px; flex:1; min-width:0}
+.field label{font-weight:700}
+.input{width:100%; min-height:48px; padding:10px 14px; border:var(--line) solid var(--ink); border-radius:12px; background:var(--card)}
+.input[aria-invalid="true"]{border-color:var(--coral-deep)}
+.err{display:none; width:fit-content; margin-top:4px; padding:4px 10px; border-radius:8px; background:var(--coral-deep); color:#fff; font-weight:700; font-size:.9375rem}
+.err.show{display:block}
+.demo-note{margin-top:10px; font-size:.9375rem; color:var(--muted)}
+
+/* Walkthrough: request-response cycle, one step at a time */
+.walk{display:flex; flex-direction:column; min-width:0}
+.walk-top{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; padding:12px 20px; background:var(--sky); color:#fff; border-bottom:var(--line) solid var(--ink)}
+.walk-top .for{font-weight:800}
+.walk-top .tag{padding:2px 8px; border:2px solid #fff; border-radius:6px; font-weight:800; font-size:.8125rem; white-space:nowrap}
+.walk-body{padding:18px 20px 22px}
+@container page (min-width:600px){.walk-body{padding:20px 24px 24px}}
+.panel.walk-card{padding:0; overflow:hidden}
+
+.cycle{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); grid-template-rows:auto auto auto; row-gap:0; margin:0 auto 18px; max-width:460px; font-family:var(--body)}
+.cycle .node{grid-row:2; grid-column:span 2; margin:0 5px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-height:62px; padding:6px 4px; border:var(--line) solid var(--ink); border-radius:14px; background:var(--paper); font-weight:800; font-size:.9375rem; text-align:center}
+.cycle .node small{font-weight:700; font-size:.75rem; color:var(--muted)}
+.cycle .node.on{background:var(--sky); color:#fff}
+.cycle .node.on small{color:#fff}
+.cycle .node.off{border-style:dashed; background:var(--card); color:var(--muted)}
+.cycle .arr{position:relative; color:var(--faint); font-size:.8125rem; font-weight:800}
+.cycle .arr .l{display:inline-block; padding:1px 7px; border-radius:6px; color:var(--muted); white-space:nowrap}
+.cycle .arr.on{color:var(--sky)}
+.cycle .arr.on .l{background:var(--sky); color:#fff}
+.cycle .arr i{position:absolute; left:0; right:0; height:16px; border:3px solid currentColor}
+.cycle .arr i::after{content:""; position:absolute; border:7px solid transparent}
+.cycle .top{grid-row:1; text-align:center; padding-bottom:26px}
+.cycle .top i{bottom:0; border-bottom:0; border-radius:12px 12px 0 0}
+.cycle .top i::after{right:-8.5px; bottom:-11px; border-bottom:0; border-top:10px solid currentColor}
+.cycle .bot{grid-row:3; text-align:center; padding-top:26px}
+.cycle .bot i{top:0; border-top:0; border-radius:0 0 12px 12px}
+.cycle .bot i::after{left:-8.5px; top:-11px; border-top:0; border-bottom:10px solid currentColor}
+.cycle .a1{grid-column:2/4} .cycle .a2{grid-column:4/6}
+.cycle .a4{grid-column:2/4} .cycle .a3{grid-column:4/6}
+.cycle.local .arr{visibility:hidden}
+/* cycle animation: a dot travels each lit arrow, lit boxes pulse, in the order the step happens */
+.cycle .node{position:relative}
+.cycle .run{position:absolute; inset:0; pointer-events:none}
+.cycle .pkt{display:none; position:absolute; left:-8px; width:16px; height:16px; border-radius:50%; background:var(--sky); border:3px solid #fff; box-shadow:0 0 0 2px var(--ink)}
+.cycle .top .pkt{top:-9.5px}
+.cycle .bot .pkt{bottom:-9.5px}
+.cycle .arr.on .pkt{display:block}
+.cycle.play .top.on .run{animation:go-r 2s ease-in-out var(--d,0s) 2 both}
+.cycle.play .bot.on .run{animation:go-l 2s ease-in-out var(--d,0s) 2 both}
+@keyframes go-r{0%{transform:translateX(0); opacity:0} 8%{opacity:1} 45%{transform:translateX(100%); opacity:1} 55%,100%{transform:translateX(100%); opacity:0}}
+@keyframes go-l{0%{transform:translateX(100%); opacity:0} 8%{opacity:1} 45%{transform:translateX(0); opacity:1} 55%,100%{transform:translateX(0); opacity:0}}
+.cycle .node.on::after{content:""; position:absolute; inset:-7px; border:3px solid var(--sky); border-radius:18px; opacity:0; pointer-events:none}
+.cycle.play .node.on::after{animation:ring 1s ease-out var(--d,0s) 4}
+@keyframes ring{0%{transform:scale(.94); opacity:.9} 100%{transform:scale(1.1); opacity:0}}
+.step-content.enter{animation:enter .25s ease-out}
+@keyframes enter{from{opacity:0; transform:translateY(6px)}}
+.replay-anim{min-height:44px; padding:0 4px; border:0; background:none; font-weight:800; font-size:.875rem; color:var(--ink); text-decoration:underline; text-underline-offset:3px}
+
+.step-meta{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px 12px; font-weight:700; font-size:.875rem; color:var(--muted)}
+.dots{display:flex; gap:6px}
+.dots i{width:10px; height:10px; border-radius:50%; border:2px solid var(--ink); background:var(--card)}
+.dots i.done{background:var(--ink)}
+.dots i.now{background:var(--sky); border-color:var(--sky); transform:scale(1.25)}
+.step-h{margin-top:6px; font:800 1.25rem/1.25 var(--display); letter-spacing:-.01em; outline:none}
+.step-text{margin-top:10px; max-width:62ch}
+.step-text+.step-text{margin-top:8px}
+.req-line{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:14px; font:700 .9375rem/1.4 var(--mono); overflow-wrap:anywhere}
+.verb{display:inline-block; padding:3px 8px; border:2px solid var(--ink); border-radius:6px; background:var(--sky); color:#fff; font:700 .875rem/1.2 var(--mono)}
+.status-code{display:inline-block; margin-top:14px; padding:4px 10px; border:2px solid var(--ink); border-radius:8px; background:var(--mint); font:700 .9375rem/1.2 var(--mono)}
+.code{margin:12px 0 0; padding:14px 16px; background:var(--ink); color:var(--paper); border-radius:12px; font:400 .8125rem/1.6 var(--mono); overflow-x:auto; white-space:pre; tab-size:4}
+.code .k{color:var(--tangerine)} .code .s{color:var(--mint)} .code .d{color:var(--sky-soft)} .code .c{color:#C9C5BC; font-style:italic} .code .n{color:var(--yolk)}
+.code-cap{margin-top:14px; font-weight:800; font-size:.875rem}
+.anatomy{margin:10px 0 0; display:grid; gap:8px}
+.anatomy > div{padding:10px 12px; border:2px solid var(--ink); border-radius:12px; background:var(--paper)}
+.anatomy dt code{font:700 .875rem/1.45 var(--mono); color:var(--ink); overflow-wrap:anywhere}
+.anatomy dd{margin:4px 0 0; font-size:.9375rem; line-height:1.45}
+.code.plain{background:#FBFAF7; color:var(--ink); border:2px solid var(--ink)}
+.code.plain .k{color:var(--sky); font-weight:700} .code.plain .s{color:var(--coral-deep)} .code.plain .n{color:var(--plum); font-weight:700} .code.plain .d{color:var(--ink); font-weight:700}
+.code-toggle{margin-top:14px; min-height:44px; padding:6px 14px; border:2px solid var(--sky); border-radius:999px; background:var(--card); color:var(--sky); font-weight:800; font-size:.875rem}
+.code-toggle[aria-pressed="true"]{background:var(--sky); color:#fff}
+.analogy{padding:12px 14px; border-radius:12px; background:var(--sky-wash); border-left:5px solid var(--sky)}
+.fake{margin-top:14px; padding:12px 14px; border:2px dashed var(--coral-deep); border-radius:12px}
+.fake b{color:var(--coral-deep)}
+.step-nav{display:flex; flex-wrap:wrap; align-items:center; gap:14px 12px; margin-top:22px}
+.step-nav .pager{display:flex; gap:12px; margin-left:auto}
+
+/* Dock */
+.dock-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 20px; border-bottom:var(--line) solid var(--ink); background:var(--paper)}
+.dock-head h2{font:800 1.125rem/1.2 var(--display)}
+.dock-empty{padding:22px 20px; color:var(--muted)}
+.dock-empty .cycle{margin-top:18px}
+.dock-walk .walk-top{border-top:0}
+.dock-log{margin-top:auto; padding:16px 20px 20px; border-top:2px dashed var(--faint)}
+.dock-log h3{font:800 .9375rem/1.2 var(--body)}
+.dock-log ol{margin:8px 0 0; padding-left:1.6em; font:400 .8125rem/1.6 var(--mono); max-height:9.6em; overflow:auto}
+.dock-log li::marker{color:var(--muted)}
+
+/* Lobby */
+.lobby-bar{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px}
+.lobby-bar h3{font:800 1.0625rem/1.2 var(--display)}
+.tables{display:grid; grid-template-columns:1fr; gap:24px; margin:20px 0 0; padding:0; list-style:none}
+.table{border:var(--line) solid var(--ink); border-radius:var(--r-panel); background:var(--card); overflow:hidden; display:flex; flex-direction:column}
+.table .band{height:112px; border-bottom:var(--line) solid var(--ink); display:flex; align-items:flex-end; justify-content:center; gap:4px; padding-bottom:8px}
+.table .band.tangerine{background:var(--tangerine)}
+.table .band.coconut{background:var(--sky)}
+.table .band.mint{background:var(--mint)}
+.table .band svg{width:60px; height:60px; overflow:visible}
+.table .info{padding:16px; display:grid; gap:4px; flex:1}
+.table .host{font-weight:800}
+.table .meta{color:var(--muted)}
+.table .act{padding:0 16px 18px}
+.table .seat-note{font-weight:700; color:var(--coral-deep)}
+
+@container page (min-width:640px){.tables{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* You */
+.explain{max-width:68ch; margin:0 0 28px; padding:16px 18px; border:2px dashed var(--sky); border-radius:14px; background:var(--card)}
+.explain h3{font:800 1rem/1.3 var(--display)}
+.explain p{margin-top:8px}
+.explain code{font:700 .9375rem var(--mono); color:var(--sky); overflow-wrap:anywhere}
+.explain ul{list-style:none; margin:12px 0 0; padding:0; display:grid; gap:10px}
+.explain li{display:flex; align-items:baseline; gap:10px}
+.explain .verb{flex:none; min-width:4.6em; text-align:center}
+.verb.get{background:var(--card); color:var(--sky)}
+.you{display:grid; gap:28px}
+@container page (min-width:820px){.you{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:32px}}
+.profile{display:grid; grid-template-columns:auto 1fr; gap:16px 20px; align-items:center}
+.rating-stamp{width:116px; height:116px}
+.rating-stamp text{font-family:var(--body)}
+.profile .name{font:800 1.375rem/1.2 var(--display); overflow-wrap:anywhere}
+.record{grid-column:1/-1; display:flex; flex-wrap:wrap; gap:8px}
+.record span{padding:6px 12px; border:2px solid var(--ink); border-radius:999px; font-weight:700; font-variant-numeric:tabular-nums}
+.recent{grid-column:1/-1; margin:0; padding:0; list-style:none; display:grid; gap:4px}
+.recent li{display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:2px dotted rgba(22,22,22,.35)}
+.recent .res{font-weight:800}
+.sets{border:0; padding:0; margin:20px 0 0; min-width:0}
+.sets legend{font-weight:700; margin-bottom:8px; padding:0}
+.set-opts{display:flex; flex-wrap:wrap; gap:10px}
+.set-opt{position:relative}
+.set-opt input{position:absolute; opacity:0; inset:0; margin:0; cursor:pointer}
+.set-opt label{display:inline-flex; align-items:center; gap:8px; min-height:48px; padding:8px 14px 8px 8px; border:var(--line) solid var(--ink); border-radius:999px; background:var(--card); font-weight:700; cursor:pointer}
+.set-opt .sw{display:inline-flex}
+.set-opt .sw i{width:20px; height:20px; border-radius:50%; border:2px solid var(--ink)}
+.set-opt .sw i+i{margin-left:-6px}
+.set-opt input:checked+label{background:var(--ink); color:var(--card)}
+.set-opt input:checked+label .sw i{border-color:var(--card)}
+.set-opt input:focus-visible+label{outline:3px solid var(--ink); outline-offset:3px}
+.form-actions{display:flex; flex-wrap:wrap; align-items:center; gap:12px 16px; margin-top:22px}
+.ok{display:none; padding:6px 12px; border-radius:8px; background:var(--mint); border:2px solid var(--ink); font-weight:700}
+.ok.show{display:block}
+
+/* Footer */
+.site-foot{background:var(--plum); color:#fff; padding-block:48px; border-top:var(--line) solid var(--ink)}
+.site-foot .cols{display:grid; gap:24px}
+.site-foot h2{font:800 1.375rem/1.2 var(--display)}
+.site-foot p{max-width:62ch; margin-top:10px}
+
+/* Intro modal */
+.intro{width:min(600px, calc(100vw - 24px)); max-height:calc(100dvh - 32px); padding:0; border:var(--line) solid var(--ink); border-radius:22px; background:var(--card); color:var(--ink); box-shadow:8px 8px 0 var(--ink); overflow:auto}
+.intro::backdrop{background:rgba(22,22,22,.6)}
+.intro-in{padding:18px 18px 20px}
+@media (min-width:600px){.intro-in{padding:26px 28px}}
+.intro h2{font:800 clamp(1.25rem,4.4vw,1.625rem)/1.15 var(--display); letter-spacing:-.02em; padding-right:8px}
+.intro .lead{margin-top:8px; color:var(--muted); font-size:.9375rem; line-height:1.45}
+.intro ol{list-style:none; margin:16px 0 0; padding:0; display:grid; gap:10px; counter-reset:s}
+.intro li{counter-increment:s; display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; padding:10px 12px; font-size:.9375rem; line-height:1.4; border:2px solid var(--ink); border-radius:14px; background:var(--paper)}
+.intro li::before{content:counter(s); display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--ink); color:#fff; font:800 1rem/1 var(--body)}
+.intro .demo{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:6px}
+.intro .fake-switch{display:inline-flex; align-items:center; gap:8px; padding:4px 6px 4px 10px; border:var(--line) solid var(--ink); border-radius:999px; background:var(--card); font-weight:800; font-size:.875rem}
+.intro .fake-switch .track{position:relative; width:40px; height:22px; border:2px solid var(--ink); border-radius:999px; background:var(--sky)}
+.intro .fake-switch .track::after{content:""; position:absolute; top:2px; right:2px; width:14px; height:14px; border-radius:50%; background:#fff; box-shadow:0 0 0 2px var(--ink)}
+.intro .fake-btn{display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border:var(--line) solid var(--ink); border-radius:999px; background:var(--yolk); font-weight:800; font-size:.875rem}
+.intro .fake-btn .method{display:inline-block; font-size:.75rem}
+.intro .mini{display:inline-flex; align-items:center; gap:4px; font-weight:800; font-size:.8125rem}
+.intro .mini span{padding:2px 7px; border:2px solid var(--ink); border-radius:8px; background:var(--card)}
+.intro .mini span.on{background:var(--sky); color:#fff}
+.intro .wide{display:none; margin-top:10px; padding:10px 12px; font-size:.9375rem; line-height:1.4; border:2px dashed var(--ink); border-radius:12px}
+@media (min-width:1200px){.intro .wide{display:block}}
+.intro .acts{display:flex; flex-wrap:wrap; gap:14px; margin-top:18px}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .cycle .pkt,.replay-anim{display:none!important}
+  *,*::before,*::after{animation:none!important; transition-duration:.01ms!important}
+  .face{transition:opacity .2s!important}
+  .face.back,.flipper.flipped .face.front,.flipper.flipped .face.back{transform:none}
+  .face.back{opacity:0}
+  .flipper.flipped .face.front{opacity:0}
+  .flipper.flipped .face.back{opacity:1}
+}
+</style>
+</head>
+<body>
+<a class="skip on-dark" href="#main">Skip to content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.35" fill="#161616" fill-opacity=".5"/></pattern>
+    <mask id="shade" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect x="56" y="0" width="44" height="100" fill="#fff"/></mask>
+    <!-- PIECE SHAPES: original toy pieces, 100x100, base at y=92 -->
+    <g id="s-p"><path d="M32 80Q34 62 42 55L58 55Q66 62 68 80Z"/><rect x="34" y="47" width="32" height="10" rx="5"/><circle cx="50" cy="32" r="15"/><rect x="18" y="78" width="64" height="14" rx="7"/></g>
+    <g id="s-r"><path d="M31 80L34 46L66 46L69 80Z"/><path d="M27 48L27 22L37 22L37 29L45 29L45 22L55 22L55 29L63 29L63 22L73 22L73 48Z"/><rect x="18" y="78" width="64" height="14" rx="7"/></g>
+    <g id="s-b"><path d="M34 80Q36 60 44 54L56 54Q64 60 66 80Z"/><rect x="36" y="46" width="28" height="10" rx="5"/><path d="M50 14C64 24 66 38 58 48L42 48C34 38 36 24 50 14Z"/><circle cx="50" cy="11" r="5"/><rect x="18" y="78" width="64" height="14" rx="7"/></g>
+    <g id="s-q"><path d="M30 80Q34 58 42 50L58 50Q66 58 70 80Z"/><path d="M27 24L38 38L44 19L50 35L56 19L62 38L73 24L67 50L33 50Z"/><circle cx="27" cy="21" r="5"/><circle cx="44" cy="15" r="5"/><circle cx="56" cy="15" r="5"/><circle cx="73" cy="21" r="5"/><rect x="18" y="78" width="64" height="14" rx="7"/></g>
+    <g id="s-k"><path d="M30 80Q34 58 42 50L58 50Q66 58 70 80Z"/><path d="M33 50L30 31Q50 23 70 31L67 50Z"/><rect x="46" y="5" width="8" height="24" rx="3"/><rect x="39" y="10" width="22" height="8" rx="3"/><rect x="18" y="78" width="64" height="14" rx="7"/></g>
+    <g id="s-n"><path d="M31 80C29 66 34 56 44 50L40 47C31 51 22 48 21 41C20 33 31 22 43 20L45 11L54 18C71 21 79 37 75 57L72 80Z"/><rect x="18" y="78" width="64" height="14" rx="7"/></g>
+    <!-- PIECE SYMBOLS: fill = currentColor, halftone on the right, ink outline -->
+    <symbol id="p-p" viewBox="-4 -4 108 108"><use href="#s-p" fill="currentColor"/><use href="#s-p" fill="url(#dots)" mask="url(#shade)"/><use href="#s-p" fill="none" stroke="#161616" stroke-width="5" stroke-linejoin="round"/></symbol>
+    <symbol id="p-r" viewBox="-4 -4 108 108"><use href="#s-r" fill="currentColor"/><use href="#s-r" fill="url(#dots)" mask="url(#shade)"/><use href="#s-r" fill="none" stroke="#161616" stroke-width="5" stroke-linejoin="round"/></symbol>
+    <symbol id="p-b" viewBox="-4 -4 108 108"><use href="#s-b" fill="currentColor"/><use href="#s-b" fill="url(#dots)" mask="url(#shade)"/><use href="#s-b" fill="none" stroke="#161616" stroke-width="5" stroke-linejoin="round"/><path d="M53 24L46 36" stroke="#161616" stroke-width="5" stroke-linecap="round"/></symbol>
+    <symbol id="p-q" viewBox="-4 -4 108 108"><use href="#s-q" fill="currentColor"/><use href="#s-q" fill="url(#dots)" mask="url(#shade)"/><use href="#s-q" fill="none" stroke="#161616" stroke-width="5" stroke-linejoin="round"/></symbol>
+    <symbol id="p-k" viewBox="-4 -4 108 108"><use href="#s-k" fill="currentColor"/><use href="#s-k" fill="url(#dots)" mask="url(#shade)"/><use href="#s-k" fill="none" stroke="#161616" stroke-width="5" stroke-linejoin="round"/></symbol>
+    <symbol id="p-n" viewBox="-4 -4 108 108"><use href="#s-n" fill="currentColor"/><use href="#s-n" fill="url(#dots)" mask="url(#shade)"/><use href="#s-n" fill="none" stroke="#161616" stroke-width="5" stroke-linejoin="round"/><circle cx="45" cy="31" r="4" fill="#161616"/><path d="M58 22Q66 34 64 50" fill="none" stroke="#161616" stroke-width="4" stroke-linecap="round"/></symbol>
+    <symbol id="scallop" viewBox="-12 -12 224 224"><path d="M186.0 100.0 Q209.8 121.9 179.5 132.9 Q193.1 162.2 160.8 160.8 Q162.2 193.1 132.9 179.5 Q121.9 209.8 100.0 186.0 Q78.1 209.8 67.1 179.5 Q37.8 193.1 39.2 160.8 Q6.9 162.2 20.5 132.9 Q-9.8 121.9 14.0 100.0 Q-9.8 78.1 20.5 67.1 Q6.9 37.8 39.2 39.2 Q37.8 6.9 67.1 20.5 Q78.1 -9.8 100.0 14.0 Q121.9 -9.8 132.9 20.5 Q162.2 6.9 160.8 39.2 Q193.1 37.8 179.5 67.1 Q209.8 78.1 186.0 100.0Z"/></symbol>
+  </defs>
+</svg>
+
+<div class="concept on-dark" role="region" aria-label="About this site">
+  <div class="wrap">
+    <p>Design concept. Pocket Pawns isn't a real app, and every player, game and rating here is a sample.</p>
+    <details id="about">
+      <summary>What is this?</summary>
+      <div class="more">
+        <p>This page is only the part you see, called the frontend. It looks like a live game room, but the opponent, the lobby and your rating are all made up inside this page. Nobody is on the other side.</p>
+        <p>Turn on <strong>Show requests</strong> to see what each button would ask a real server (the backend), and how it would answer, one step at a time. It's part of a series about the backend. This one covers how a page and a server talk, known as REST API design.</p>
+        <button class="link-btn" type="button" id="openIntro">How Show requests works</button>
+      </div>
+    </details>
+  </div>
+</div>
+
+<header class="site-head" id="siteHead">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Pocket Pawns, back to top">
+      <svg viewBox="-4 -4 108 108" aria-hidden="true" style="color:var(--tangerine)"><use href="#p-p"/></svg>
+      <span class="brand-txt">Pocket Pawns</span>
+    </a>
+    <nav aria-label="Sections">
+      <ul class="nav">
+        <li><a href="#play">Game</a></li>
+        <li><a href="#lobby">Lobby</a></li>
+        <li><a href="#you">You</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <button class="switch" id="reqSwitch" role="switch" aria-checked="false" aria-describedby="countDesc">
+        <span class="lbl-long">Show requests</span><span class="lbl-short">Requests</span>
+        <span class="track" aria-hidden="true"><span class="knob"></span></span>
+        <span class="counter" id="counter" aria-hidden="true">3</span>
+      </button>
+      <span class="sr-only" id="countDesc">The number shows how many requests this page would have sent to a server.</span>
+      <button class="pin" id="pinBtn" type="button" aria-pressed="false"><span class="pin-ico" aria-hidden="true"></span>Show on left</button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="dock" id="dock" aria-labelledby="dockH">
+    <div class="dock-head">
+      <h2 id="dockH">Backend view</h2>
+      <button class="btn small" type="button" id="unpin">Unpin</button>
+    </div>
+    <div class="dock-empty" id="dockEmpty">
+      <p>Press any button with a blue tag. You'll see its trip to the server and back here, one step at a time, while the board stays in view.</p>
+      <div class="cycle" aria-hidden="true">
+        <span class="arr top a1"><span class="l">Request</span><i></i></span><span class="arr top a2"><span class="l">Look up</span><i></i></span>
+        <span class="node">Browser<small>your page</small></span><span class="node">Server<small>backend code</small></span><span class="node">Database<small>saved data</small></span>
+        <span class="arr bot a4"><i></i><span class="l">Response</span></span><span class="arr bot a3"><i></i><span class="l">Result</span></span>
+      </div>
+    </div>
+    <div class="dock-walk walk" id="dockWalk" hidden></div>
+    <div class="dock-log">
+      <h3 id="logH">Requests so far</h3>
+      <ol id="log" aria-labelledby="logH">
+        <li>GET /games/you-vs-slowbishop</li><li>GET /games?status=open&amp;limit=3</li><li>GET /players/me</li>
+      </ol>
+    </div>
+    <p class="sr-only" id="dockLive" role="status" aria-live="polite"></p>
+  </aside>
+
+  <div class="content">
+    <main id="main" tabindex="-1">
+      <!-- HERO -->
+      <div class="hero" id="top">
+        <span class="giant e2" aria-hidden="true">e2</span>
+        <span class="giant e4" aria-hidden="true">e4</span>
+        <div class="wrap">
+          <div class="hero-copy">
+            <h1>
+              <span class="h1-name"><svg viewBox="-4 -4 108 108" aria-hidden="true" style="color:var(--tangerine)"><use href="#p-p"/></svg>Pocket Pawns</span> <span class="h1-line">Chess that fits in your pocket<span class="stop">.</span></span>
+            </h1>
+            <p class="hero-intro">Quick ten-minute games against people at your level. Find a table, make your move, say gg.</p>
+            <div class="hero-ctas">
+              <button class="btn primary bubble" type="button" data-req="findMatch" data-flip="gameFlip" id="findMatch"><span class="method">POST</span>Find a match</button>
+              <a class="btn" href="#play">Watch the sample game</a>
+            </div>
+          </div>
+          <div class="hero-art" id="heroArt">
+            <div class="sticker" aria-hidden="true">
+              <svg viewBox="-12 -12 224 224"><use href="#scallop" fill="#C81E3A" stroke="#161616" stroke-width="5"/>
+                <text x="100" y="92" text-anchor="middle">Design</text><text x="100" y="124" text-anchor="middle">concept</text></svg>
+            </div>
+            <svg viewBox="0 0 520 560" role="img" aria-label="Toy chess pieces popping out of a jeans pocket">
+              <defs><clipPath id="pocketRight"><rect x="262" y="290" width="200" height="270"/></clipPath></defs>
+              <g class="burst-lines" stroke="#161616" stroke-width="5" stroke-linecap="round" fill="none">
+                <path d="M120 300L72 268"/><path d="M110 250L60 236"/><path d="M400 300L452 266"/><path d="M412 246L464 234"/><path d="M262 92L262 50"/><path d="M200 108L182 70"/><path d="M324 108L344 70"/>
+                <rect x="70" y="180" width="18" height="10" rx="5" fill="#E8304A" transform="rotate(-30 79 185)"/><rect x="440" y="170" width="18" height="10" rx="5" fill="#8FD9B6" transform="rotate(25 449 175)"/><circle cx="160" cy="60" r="7" fill="#FF7A3D"/><circle cx="380" cy="64" r="6" fill="#135F99"/>
+              </g>
+              <path d="M106 334Q260 300 414 334L414 352Q260 322 106 352Z" fill="#0E3F66" stroke="#161616" stroke-width="5" stroke-linejoin="round"/>
+              <g class="pop" style="--r:-16deg;--d:.05s;--sx:40px;--sy:200px"><svg x="70" y="150" width="160" height="160" viewBox="-4 -4 108 108" style="color:#FF7A3D"><use href="#p-n"/></svg></g>
+              <g class="pop" style="--r:12deg;--d:.25s;--sx:-60px;--sy:200px"><svg x="300" y="160" width="150" height="150" viewBox="-4 -4 108 108" style="color:#8FD9B6"><use href="#p-r"/><ellipse cx="43" cy="60" rx="3.6" ry="5" fill="#161616"/><ellipse cx="57" cy="60" rx="3.6" ry="5" fill="#161616"/></svg></g>
+              <g class="pop" style="--r:4deg;--d:.15s;--sx:0px;--sy:260px"><svg x="168" y="40" width="190" height="190" viewBox="-4 -4 108 108" style="color:#E8304A"><use href="#p-q"/><ellipse cx="44" cy="63" rx="3.4" ry="4.8" fill="#161616"/><ellipse cx="56" cy="63" rx="3.4" ry="4.8" fill="#161616"/><path d="M45 71Q50 75 55 71" fill="none" stroke="#161616" stroke-width="3" stroke-linecap="round"/></svg></g>
+              <g class="pop" style="--r:-8deg;--d:.35s;--sx:30px;--sy:120px"><svg x="150" y="210" width="120" height="120" viewBox="-4 -4 108 108" style="color:#FAF8F3"><use href="#p-p"/><ellipse cx="45" cy="33" rx="3" ry="4.2" fill="#161616"/><ellipse cx="55" cy="33" rx="3" ry="4.2" fill="#161616"/></svg></g>
+              <g class="pop" style="--r:14deg;--d:.45s;--sx:-30px;--sy:120px"><svg x="262" y="214" width="116" height="116" viewBox="-4 -4 108 108" style="color:#6E1E4A"><use href="#p-b"/><ellipse cx="45" cy="64" rx="3" ry="4.2" fill="#FAF8F3"/><ellipse cx="55" cy="64" rx="3" ry="4.2" fill="#FAF8F3"/></svg></g>
+              <g>
+                <path d="M104 340Q260 312 416 340L404 478L260 540L116 478Z" fill="#135F99" stroke="#161616" stroke-width="5" stroke-linejoin="round"/>
+                <path d="M104 340Q260 312 416 340L404 478L260 540L116 478Z" fill="url(#dots)" opacity=".7" clip-path="url(#pocketRight)"/>
+                <path d="M126 362Q260 338 394 362L384 466L260 518L136 466Z" fill="none" stroke="#FF7A3D" stroke-width="4" stroke-dasharray="11 8" stroke-linecap="round"/>
+                <path d="M120 386Q260 362 400 386" fill="none" stroke="#FF7A3D" stroke-width="4" stroke-dasharray="11 8" stroke-linecap="round"/>
+                <circle cx="122" cy="346" r="8" fill="#FF7A3D" stroke="#161616" stroke-width="4"/><circle cx="398" cy="346" r="8" fill="#FF7A3D" stroke="#161616" stroke-width="4"/>
+              </g>
+            </svg>
+            <button class="btn small replay" id="replay" type="button">Pop again</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAME ROOM -->
+      <section id="game" aria-labelledby="game-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2 id="game-h">Game room</h2>
+            <p>A sample game between two sample players. You play the light pieces. Press <strong>Next move</strong> to play your move, and your opponent replies.</p>
+            <p class="load-chip">Loaded with <b>GET</b> /games/you-vs-slowbishop</p>
+          </div>
+          <div class="room">
+            <div class="play" id="play">
+              <div class="player" id="pTop">
+                <span class="dot b" aria-hidden="true"></span>
+                <span class="who">@slowbishop</span> <span class="sample">Sample</span>
+                <span class="clock"><span class="sr-only">Opponent's clock </span><span id="clockB">10:00</span></span>
+              </div>
+              <div class="board-frame">
+                <div class="board" id="board" role="img" aria-label="Chess board at the starting position"></div>
+                <div class="pieces" id="pieces" aria-hidden="true"></div>
+                <div class="coords files" id="files" aria-hidden="true"></div>
+                <div class="coords ranks" id="ranks" aria-hidden="true"></div>
+              </div>
+              <div class="player turn" id="pBot">
+                <span class="dot w" aria-hidden="true"></span>
+                <span class="who">@you</span> <span class="sample">Sample</span>
+                <span class="clock"><span class="sr-only">Your clock </span><span id="clockW">10:00</span></span>
+              </div>
+              <p class="status" id="gameStatus" role="status" aria-live="polite">Your move. You have the light pieces.</p>
+              <div class="controls">
+                <button class="btn primary" type="button" id="nextMove" data-req="move" data-flip="gameFlip"><span class="method">POST</span>Next move</button>
+                <button class="btn" type="button" id="offerDraw" data-req="offerDraw" data-flip="gameFlip"><span class="method">POST</span>Offer draw</button>
+                <button class="btn" type="button" id="rematch" data-req="rematch" data-flip="gameFlip"><span class="method">POST</span>Rematch</button>
+                <button class="btn" type="button" id="flipBoard" data-req="flipBoard" data-flip="gameFlip"><span class="method local">No request</span>Flip board</button>
+              </div>
+            </div>
+
+            <div class="flipper" id="gameFlip">
+              <div class="face front panel">
+                <div class="sub">
+                  <h3 id="movesH">Moves</h3>
+                  <ol class="moves" id="moves" aria-labelledby="movesH"><li class="moves-empty">No moves yet.</li></ol>
+                  <div class="resign-row">
+                    <button class="btn danger small" type="button" id="resign" aria-expanded="false" aria-controls="confirmResign">Resign</button>
+                  </div>
+                  <div class="confirm" id="confirmResign">
+                    <p>Resign this game? Your opponent wins.</p>
+                    <div class="resign-row" style="margin-top:0">
+                      <button class="btn danger" type="button" id="resignYes" data-req="resign" data-flip="gameFlip"><span class="method">POST</span>Yes, resign</button>
+                      <button class="btn" type="button" id="resignNo">Keep playing</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="sub">
+                  <h3 id="chatH">Chat <span class="sample">Sample</span></h3>
+                  <ul class="chat-log" id="chatLog" aria-labelledby="chatH" tabindex="0">
+                    <li><b>@slowbishop:</b> hi! good luck</li>
+                  </ul>
+                  <form class="chat-form" id="chatForm" novalidate>
+                    <div class="chat-row">
+                      <div class="field">
+                        <label for="chatInput">Message</label>
+                        <input class="input" id="chatInput" name="message" type="text" maxlength="200" autocomplete="off" aria-describedby="chatErr chatNote">
+                      </div>
+                      <button class="btn" type="submit" data-req="chat" data-flip="gameFlip"><span class="method">POST</span>Send</button>
+                    </div>
+                    <p class="err" id="chatErr" role="alert"></p>
+                    <p class="demo-note" id="chatNote">This chat is here as an example. Nothing you type is sent or saved.</p>
+                  </form>
+                </div>
+              </div>
+              <div class="face back panel walk-card walk" hidden role="region" aria-label="Backend walkthrough"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LOBBY -->
+      <section id="lobby" aria-labelledby="lobby-h" style="padding-top:0">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2 id="lobby-h">Open tables</h2>
+            <p>Players waiting for an opponent. Every table here is a sample, so joining one won't start a real game.</p>
+            <p class="load-chip">Loaded with <b>GET</b> /games?status=open&amp;limit=3</p>
+          </div>
+          <div class="flipper" id="lobbyFlip">
+            <div class="face front">
+              <div class="lobby-bar">
+                <h3 id="tablesH">3 tables open <span class="sample">Sample</span></h3>
+                <button class="btn small" type="button" data-req="refreshLobby" data-flip="lobbyFlip" id="refreshLobby"><span class="method">GET</span>Refresh tables</button>
+              </div>
+              <p class="sr-only" id="lobbyStatus" role="status" aria-live="polite"></p>
+              <ul class="tables" id="tables" aria-labelledby="tablesH"></ul>
+            </div>
+            <div class="face back panel walk-card walk" hidden role="region" aria-label="Backend walkthrough"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- YOU -->
+      <section id="you" aria-labelledby="you-h" style="padding-top:0">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2 id="you-h">Your corner</h2>
+            <p>Your rating, your last few games and how your pieces look.</p>
+            <p class="load-chip">Loaded with <b>GET</b> /players/me</p>
+          </div>
+          <div class="explain">
+            <h3>How this section talks to the server</h3>
+            <p>An <strong>endpoint</strong> is an address on the server that the page can ask for something. This whole section uses just one: <code>/players/me</code>. "me" means whoever is signed in, so the same address works for every player.</p>
+            <ul>
+              <li><span class="verb get">GET</span> <span>When the page opens, it asks for your profile: name, rating, record and recent games.</span></li>
+              <li><span class="verb">PATCH</span> <span>When you press Save settings, it sends only what you changed.</span></li>
+            </ul>
+          </div>
+          <div class="flipper" id="youFlip">
+            <div class="face front">
+              <div class="you">
+                <div class="panel profile">
+                  <svg class="rating-stamp" viewBox="0 0 124 124" role="img" aria-label="Rating 1180, sample">
+                    <defs><path id="ring" d="M62 62m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/></defs>
+                    <circle cx="62" cy="62" r="58" fill="#C81E3A" stroke="#161616" stroke-width="4"/>
+                    <circle cx="62" cy="62" r="34" fill="#FFFFFF" stroke="#161616" stroke-width="3"/>
+                    <text font-size="13" font-weight="800" fill="#FFFFFF" letter-spacing="1.5"><textPath href="#ring">rating   sample   rating   sample</textPath></text>
+                    <text x="62" y="70" text-anchor="middle" font-size="22" font-weight="800" fill="#161616">1180</text>
+                  </svg>
+                  <div>
+                    <p class="name" id="displayName">@you</p>
+                    <p style="color:var(--muted);margin-top:4px">Playing since March <span class="sample">Sample</span></p>
+                  </div>
+                  <div class="record">
+                    <span>12 wins</span><span>9 losses</span><span>3 draws</span>
+                  </div>
+                  <ul class="recent" aria-label="Recent games">
+                    <li><span>vs @pawnstorm77, 31 moves</span><span class="res">Won</span></li>
+                    <li><span>vs @castle_early, on time</span><span class="res">Lost</span></li>
+                    <li><span>vs @e4enjoyer, repetition</span><span class="res">Draw</span></li>
+                  </ul>
+                </div>
+                <form class="panel" id="settingsForm" novalidate>
+                  <h3>Settings</h3>
+                  <div class="field" style="margin-top:16px">
+                    <label for="nameInput">Display name</label>
+                    <input class="input" id="nameInput" name="display_name" type="text" autocomplete="nickname" value="you" maxlength="20" aria-describedby="nameHelp nameErr">
+                    <p class="demo-note" id="nameHelp" style="margin-top:0">3 to 20 letters, numbers or underscores.</p>
+                    <p class="err" id="nameErr" role="alert"></p>
+                  </div>
+                  <fieldset class="sets">
+                    <legend>Piece set</legend>
+                    <div class="set-opts">
+                      <span class="set-opt"><input type="radio" name="piece_set" id="set-tangerine" value="tangerine"><label for="set-tangerine"><span class="sw" aria-hidden="true"><i style="background:#FF7A3D"></i><i style="background:#6E1E4A"></i></span>Tangerine</label></span>
+                      <span class="set-opt"><input type="radio" name="piece_set" id="set-coconut" value="coconut"><label for="set-coconut"><span class="sw" aria-hidden="true"><i style="background:#FAF8F3"></i><i style="background:#135F99"></i></span>Coconut</label></span>
+                      <span class="set-opt"><input type="radio" name="piece_set" id="set-mint" value="mint"><label for="set-mint"><span class="sw" aria-hidden="true"><i style="background:#8FD9B6"></i><i style="background:#C81E3A"></i></span>Mint</label></span>
+                    </div>
+                  </fieldset>
+                  <div class="form-actions">
+                    <button class="btn primary" type="submit" data-req="saveSettings" data-flip="youFlip"><span class="method">PATCH</span>Save settings</button>
+                    <p class="ok" id="saveOk" role="status">Saved in this tab only. Nothing was sent.</p>
+                  </div>
+                  <p class="demo-note">This form is here as an example. Nothing you type is sent or saved.</p>
+                </form>
+              </div>
+            </div>
+            <div class="face back panel walk-card walk" hidden role="region" aria-label="Backend walkthrough"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-foot on-dark">
+      <div class="wrap cols">
+        <div>
+          <h2>Pocket Pawns is a design concept</h2>
+          <p>It's only the part you see, with nothing behind it. The opponent's moves, the lobby and your rating are written into this page, which is why they never change. A real game room needs a server that both players' phones can talk to.</p>
+          <p>Every name, rating and game here is a sample. No data leaves this page.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<dialog class="intro" id="intro" aria-labelledby="introH" aria-describedby="introLead">
+  <div class="intro-in">
+    <h2 id="introH">Every button here is a request</h2>
+    <p class="lead" id="introLead">This game room is only the part you see, called the frontend. Here's how to peek at what it would ask a real server, the backend.</p>
+    <ol>
+      <li><div><strong>Turn on Show requests</strong> at the top of the page.
+        <div class="demo" aria-hidden="true"><span class="fake-switch">Show requests <span class="track"></span></span></div></div></li>
+      <li><div><strong>Press a button with a blue tag</strong>, like Next move. The tag shows what kind of request it is.
+        <div class="demo" aria-hidden="true"><span class="fake-btn"><span class="method">POST</span>Next move</span></div></div></li>
+      <li><div><strong>Follow the trip, one step at a time.</strong> The card flips over and walks you from your browser to the server and back.
+        <div class="demo mini" aria-hidden="true"><span class="on">Browser</span><span>Server</span><span>Database</span></div></div></li>
+    </ol>
+    <p class="wide">On a wide screen, press <strong>Show on left</strong> to keep the walkthrough beside the board instead.</p>
+    <div class="acts">
+      <button class="btn primary" type="button" id="introOn">Turn it on</button>
+      <button class="btn" type="button" id="introLater">Not now</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const wide = matchMedia('(min-width: 1200px)');
+  const GAME = 'you-vs-slowbishop';
+
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v){ try { localStorage.setItem(k, v); } catch {} }
+  };
+
+  /* ---------- header height feeds the sticky offsets and board sizing ---------- */
+  const head = $('#siteHead');
+  const syncHead = () => document.documentElement.style.setProperty('--header-h', head.offsetHeight + 'px');
+  syncHead();
+  addEventListener('resize', syncHead);
+  if (document.fonts) document.fonts.ready.then(syncHead);
+
+  /* ---------- "What is this?" remembers its state ---------- */
+  const about = $('#about');
+  if (store.get('pp-about') === 'open') about.open = true;
+  about.addEventListener('toggle', () => store.set('pp-about', about.open ? 'open' : 'closed'));
+
+  /* ---------- toy set: random each load, changeable in settings ---------- */
+  const SETS = ['tangerine', 'coconut', 'mint'];
+  let pieceSet = SETS[Math.floor(Math.random() * SETS.length)];
+  const applySet = s => { document.body.dataset.set = s; pieceSet = s; $('#set-' + s).checked = true; };
+  applySet(pieceSet);
+  const saved = {display_name: 'you', piece_set: pieceSet};
+
+  /* ---------- request counter and log ---------- */
+  let sent = 3;
+  const counter = $('#counter');
+  const logReq = (method, path) => {
+    sent++; counter.textContent = sent;
+    counter.classList.remove('bump'); void counter.offsetWidth; counter.classList.add('bump');
+    const li = document.createElement('li'); li.textContent = `${method} ${path}`;
+    $('#log').appendChild(li); $('#log').scrollTop = $('#log').scrollHeight;
+  };
+
+  /* ---------- hero burst ---------- */
+  const art = $('#heroArt');
+  const playBurst = () => {
+    if (reduceMotion.matches) return;
+    art.classList.remove('go'); void art.offsetWidth; art.classList.add('go');
+  };
+  playBurst();
+  $('#replay').addEventListener('click', playBurst);
+
+  /* ---------- sample game (verified legal with chess.js; ends in mate) ---------- */
+  const SCRIPT = [
+    {san:'e4',from:'e2',to:'e4',t:4},{san:'e5',from:'e7',to:'e5',t:6},
+    {san:'Nf3',from:'g1',to:'f3',t:9},{san:'d6',from:'d7',to:'d6',t:5},
+    {san:'Bc4',from:'f1',to:'c4',t:12},{san:'Bg4',from:'c8',to:'g4',t:20},
+    {san:'Nc3',from:'b1',to:'c3',t:7},{san:'g6',from:'g7',to:'g6',t:8},
+    {san:'Nxe5',from:'f3',to:'e5',t:15},{san:'Bxd1',from:'g4',to:'d1',t:3},
+    {san:'Bxf7+',from:'c4',to:'f7',t:10},{san:'Ke7',from:'e8',to:'e7',t:25},
+    {san:'Nd5#',from:'c3',to:'d5',t:6}
+  ];
+  const BACK = ['r','n','b','q','k','b','n','r'];
+  const boardEl = $('#board'), piecesEl = $('#pieces');
+  let pieces = [], ply = 0, flipped = false, over = false, busy = false, clocks = {w:600, b:600};
+  let drawOffered = false, lastFrom = null, lastTo = null;
+
+  for (let i = 0; i < 64; i++) {
+    const sq = document.createElement('div');
+    sq.className = 'sq' + (((i % 8) + Math.floor(i / 8)) % 2 ? ' dk' : '');
+    boardEl.appendChild(sq);
+  }
+  const drawCoords = () => {
+    const files = 'abcdefgh'.split(''), ranks = '87654321'.split('');
+    if (flipped) { files.reverse(); ranks.reverse(); }
+    $('#files').innerHTML = files.map(f => `<span>${f}</span>`).join('');
+    $('#ranks').innerHTML = ranks.map(r => `<span>${r}</span>`).join('');
+  };
+  const xy = sq => {
+    let f = sq.charCodeAt(0) - 97, r = 8 - +sq[1];
+    if (flipped) { f = 7 - f; r = 7 - r; }
+    return [f, r];
+  };
+  const place = p => { const [x, y] = xy(p.sq); p.el.style.transform = `translate(${x * 100}%, ${y * 100}%)`; };
+  const setup = () => {
+    piecesEl.innerHTML = ''; pieces = [];
+    const add = (type, color, sq) => {
+      const el = document.createElement('div');
+      el.className = 'pc ' + color;
+      el.innerHTML = `<svg viewBox="-4 -4 108 108"><use href="#p-${type}"/></svg>`;
+      piecesEl.appendChild(el);
+      const p = {type, color, sq, el}; pieces.push(p); place(p);
+    };
+    'abcdefgh'.split('').forEach((f, i) => {
+      add(BACK[i], 'w', f + '1'); add('p', 'w', f + '2');
+      add('p', 'b', f + '7'); add(BACK[i], 'b', f + '8');
+    });
+  };
+  const highlight = (from, to) => {
+    $$('.sq', boardEl).forEach(s => s.classList.remove('hl'));
+    [from, to].forEach(sq => { if (!sq) return; const [x, y] = xy(sq); boardEl.children[y * 8 + x].classList.add('hl'); });
+  };
+  const fmt = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const renderClocks = () => {
+    $('#clockW').textContent = fmt(clocks.w); $('#clockB').textContent = fmt(clocks.b);
+    const whiteTurn = ply % 2 === 0 && !over;
+    $('#pBot').classList.toggle('turn', whiteTurn);
+    $('#pTop').classList.toggle('turn', !whiteTurn && !over);
+  };
+  const renderMoves = () => {
+    const ol = $('#moves');
+    if (!ply) { ol.innerHTML = '<li class="moves-empty">No moves yet.</li>'; return; }
+    let html = '';
+    for (let i = 0; i < ply; i += 2) {
+      const w = SCRIPT[i].san, b = i + 1 < ply ? SCRIPT[i + 1].san : '';
+      html += `<li><span class="n">${i / 2 + 1}.</span> <span class="m">${w}</span> <span class="m">${b}</span></li>`;
+    }
+    ol.innerHTML = html;
+  };
+  const describe = () => {
+    if (!ply) return 'Chess board at the starting position';
+    const m = SCRIPT[ply - 1];
+    return `Chess board after ${Math.ceil(ply / 2)}. ${ply % 2 ? '' : '... '}${m.san}`;
+  };
+  const status = t => { $('#gameStatus').textContent = t; };
+  const playPly = () => {
+    const m = SCRIPT[ply];
+    const victim = pieces.find(p => p.sq === m.to && !p.gone);
+    if (victim) { victim.gone = true; victim.el.classList.add('gone'); victim.sq = 'x'; }
+    const mover = pieces.find(p => p.sq === m.from && !p.gone);
+    mover.sq = m.to; place(mover);
+    lastFrom = m.from; lastTo = m.to; highlight(m.from, m.to);
+    clocks[ply % 2 ? 'b' : 'w'] -= m.t;
+    ply++;
+    renderMoves(); renderClocks();
+    boardEl.setAttribute('aria-label', describe());
+  };
+  const syncButtons = () => {
+    const done = over || ply >= SCRIPT.length;
+    $('#nextMove').disabled = done || busy;
+    $('#offerDraw').disabled = done || busy || drawOffered;
+    $('#resign').disabled = done;
+  };
+  const confirmBox = $('#confirmResign'), resignBtn = $('#resign');
+  const closeConfirm = () => { confirmBox.classList.remove('open'); resignBtn.setAttribute('aria-expanded', 'false'); };
+  const resetGame = () => {
+    ply = 0; over = false; busy = false; drawOffered = false; clocks = {w:600, b:600};
+    lastFrom = lastTo = null; highlight(); setup(); renderMoves(); renderClocks();
+    boardEl.setAttribute('aria-label', describe());
+    closeConfirm(); syncButtons();
+  };
+  const reqsOn = () => document.body.classList.contains('reqs');
+  const nextMove = () => {
+    if (busy || over || ply >= SCRIPT.length) return;
+    playPly();
+    if (ply >= SCRIPT.length) { finish('Checkmate. You win the sample game with a queen sacrifice.'); return; }
+    busy = true; syncButtons();
+    status(reqsOn() ? 'Move sent. Asking the server for the reply.' : '@slowbishop is thinking. Their reply is scripted.');
+    setTimeout(() => {
+      playPly(); logReq('GET', '/games/' + GAME); busy = false;
+      const m = SCRIPT[ply - 1];
+      if (ply === 10) status(`@slowbishop played ${m.san} and took your queen. Your move.`);
+      else if (ply === 12) status(`@slowbishop played ${m.san}. Find the knight move that ends it.`);
+      else status(`@slowbishop played ${m.san}. Your move.`);
+      syncButtons();
+    }, reduceMotion.matches ? 200 : 900);
+  };
+  const finish = text => {
+    over = true; busy = false; status(text); renderClocks(); syncButtons();
+    if (ply >= SCRIPT.length) addChat('@slowbishop', "gg, didn't see that coming", false);
+  };
+  resignBtn.addEventListener('click', () => { confirmBox.classList.add('open'); resignBtn.setAttribute('aria-expanded', 'true'); $('#resignNo').focus(); });
+  $('#resignNo').addEventListener('click', () => { closeConfirm(); resignBtn.focus(); });
+  const addChat = (who, text, me) => {
+    const li = document.createElement('li'); if (me) li.className = 'me';
+    const b = document.createElement('b'); b.textContent = who + ':';
+    li.append(b, ' ' + text); $('#chatLog').appendChild(li);
+    $('#chatLog').scrollTop = $('#chatLog').scrollHeight;
+  };
+
+  /* ---------- lobby ---------- */
+  const TABLES = [
+    {id:'pawnstorm77-table', host:'@pawnstorm77', rating:1150, tc:'5 min + 3 sec', set:'tangerine', pcs:['n','p']},
+    {id:'castle_early-table', host:'@castle_early', rating:1212, tc:'10 min', set:'coconut', pcs:['r','k']},
+    {id:'e4enjoyer-table', host:'@e4enjoyer', rating:1098, tc:'15 min + 10 sec', set:'mint', pcs:['q','b']}
+  ];
+  const SET_COL = {tangerine:['#FF7A3D','#6E1E4A'], coconut:['#FAF8F3','#135F99'], mint:['#8FD9B6','#C81E3A']};
+  const renderTables = order => {
+    $('#tables').innerHTML = order.map(t => `
+      <li class="table">
+        <div class="band ${t.set}" aria-hidden="true">
+          <svg viewBox="-4 -4 108 108" style="color:${SET_COL[t.set][0]}"><use href="#p-${t.pcs[0]}"/></svg>
+          <svg viewBox="-4 -4 108 108" style="color:${SET_COL[t.set][1]}"><use href="#p-${t.pcs[1]}"/></svg>
+        </div>
+        <div class="info">
+          <span class="host">${t.host}</span>
+          <span class="meta">Rated ${t.rating}, ${t.tc}</span>
+          <span class="meta">${t.set[0].toUpperCase() + t.set.slice(1)} set</span>
+          <span class="seat-note" aria-live="polite"></span>
+        </div>
+        <div class="act"><button class="btn primary small" type="button" data-req="join" data-flip="lobbyFlip" data-game="${t.id}" data-host="${t.host}"><span class="method">POST</span>Join table<span class="sr-only"> hosted by ${t.host}</span></button></div>
+      </li>`).join('');
+  };
+  let tableOrder = TABLES.slice();
+  renderTables(tableOrder);
+
+  /* ---------- what each button asks the server ----------
+     Each entry feeds the same step-by-step walk around the request-response cycle.
+     "plain" is pseudocode anyone can read; "fast" is the real FastAPI version behind a toggle.
+     Every name in the code gets a one-line meaning, so nothing is left unexplained. */
+  const PV = {
+    game:['game', 'Which game this is about. {game} in the address is a blank that gets filled in, here with ' + GAME + '.'],
+    player:['player', 'Who sent the request. The server reads it from the sign-in pass, never from the page, so nobody can pretend to be someone else.']
+  };
+  const FV = {
+    game_id:['game_id', 'Which game. FastAPI fills it in from {game_id} in the address, here ' + GAME + '.'],
+    me:['me', 'Who is asking. current_player works it out from the sign-in pass, so nobody can pretend to be someone else.'],
+    game:['game', 'The game, loaded from saved data. get_or_404 replies "not found" (404) if there is no such game.']
+  };
+  const REQ = {
+    findMatch: () => ({
+      title:'Find a match', method:'POST', path:'/matches',
+      pathWhy:'/matches is the server\'s list of people looking for a game. You are adding yourself to it.',
+      body:{time_control:'10+0', rated:false},
+      bodyNotes:{time_control:'How long the game is: 10 minutes each, with 0 extra seconds per move.', rated:'false means this game won\'t change your rating.'},
+      find:{
+        plain:`WHEN someone sends POST /matches
+  player = who sent it
+  length = the game length they picked`,
+        plainVars:[PV.player, ['length', 'Taken from the details sent. "10+0" means ten minutes each.']],
+        fast:`# The details the server expects
+class MatchRequest(BaseModel):
+    time_control: str = "10+0"
+    rated: bool = False
+
+@app.post("/matches", status_code=202)
+async def find_match(
+    body: MatchRequest,
+    me: Player = Depends(current_player),
+) -> Ticket:`,
+        fastVars:[['body', 'The details that were sent (time_control and rated), checked against MatchRequest.'], FV.me]
+      },
+      work:{
+        text:'The server adds you to a waiting line that every player\'s phone can see. One browser on its own could never see who else is waiting.',
+        plain:`  add player to the waiting line for length
+  ticket = a receipt for their place in line
+  REPLY ticket  (202)`,
+        plainVars:[['ticket', 'A receipt for your place in line. The page uses it to ask "have you found me someone yet?"'], ['202', 'A status code meaning "got it, still working on it".']],
+        fast:`    # Add this player to the waiting line
+    ticket = await matchmaker.enqueue(
+        me.id, body.time_control
+    )
+    return ticket`,
+        fastVars:[['ticket', 'A receipt for this place in line. The page uses it to check back later.'], ['matchmaker', 'The part of the backend that pairs up waiting players.']]
+      },
+      status:'202 Accepted', statusWhy:'The number is a quick status code. 202 means "got it, still working on it", because finding an opponent can take a few seconds.',
+      res:{ticket_id:'your-spot-in-line', status:'searching'},
+      resNotes:{ticket_id:'Your receipt for this place in line.', status:'"searching" means no opponent yet.'},
+      page:'The page shows "Searching" and keeps checking until someone real is found.',
+      fake:'Nothing was searched. The page jumped straight to a made-up opponent.'
+    }),
+    move: ctx => ({
+      title:'Next move', method:'POST', path:`/games/${GAME}/moves`,
+      analogy:'Think of the server as a referee who keeps the only real board. Your page can\'t check the rules or reach your opponent\'s phone, so it hands every move to the referee.',
+      pathWhy:`The address works like a mailing address that gets more specific: all games, then this game (${GAME}), then its moves. You are adding a move.`,
+      body:{move:ctx.uci},
+      bodyNotes:{move:`Your move, written as from-square then to-square: ${ctx.uci.slice(0, 2)} to ${ctx.uci.slice(2)}.`},
+      find:{
+        plain:`WHEN someone sends POST /games/{game}/moves
+  game   = the game named in the address
+  move   = the move in the details sent
+  player = who sent it`,
+        plainVars:[PV.game, ['move', `The move that was sent, here ${ctx.uci}.`], PV.player],
+        fast:`# The details the server expects
+class MoveIn(BaseModel):
+    move: str
+
+@app.post("/games/{game_id}/moves",
+          status_code=201)
+async def make_move(
+    game_id: str,
+    body: MoveIn,
+    me: Player = Depends(current_player),
+) -> GameState:`,
+        fastVars:[FV.game_id, ['body', `The details that were sent, checked against MoveIn. body.move is "${ctx.uci}".`], FV.me]
+      },
+      work:{
+        text:'The referee checks it is your turn and that the move follows the rules, then writes it on the official board, which is the saved data. Your opponent\'s phone reads that same board.',
+        plain:`  look up game in saved data
+  IF it isn't player's turn
+    REPLY "Not your turn"  (409)
+  IF move breaks the chess rules
+    REPLY "Illegal move"  (422)
+  add move to game
+  save game
+  REPLY the new board  (201)`,
+        plainVars:[['409', 'An error code meaning "that clashes with how things are right now", like moving out of turn.'], ['422', 'An error code meaning "I understood you, but that isn\'t allowed", like an illegal move.'], ['201', 'A status code meaning "created": the move is now recorded.']],
+        fast:`    game = await games.get_or_404(game_id)
+
+    if not game.is_turn_of(me.id):
+        raise HTTPException(409, "Not your turn")
+
+    # Checks the chess rules; a bad move
+    # stops here with a 422 error
+    game.play(body.move)
+
+    await games.save(game)
+    return game.state()`,
+        fastVars:[FV.game, ['HTTPException', 'Stops right away and sends an error back to the page. 409 means "not right now".'], ['game.state()', 'The new board, sent back to the page.']]
+      },
+      status:'201 Created', statusWhy:'The number is a quick status code. 201 means "created": the referee has recorded your move.',
+      res:{move_number:ctx.ply, turn:'black', last_move:ctx.uci},
+      resNotes:{move_number:`This is move number ${ctx.ply} of the game, counting both players.`, turn:'"black" means it is now your opponent\'s turn.', last_move:'The move the referee just recorded.'},
+      page:'The page moves your piece, then starts asking the referee for your opponent\'s reply.',
+      fake:'There is no referee. The page moved your piece itself and played a made-up reply.',
+      follow:{
+        title:'Then your page asks: has my opponent moved?', method:'GET', path:`/games/${GAME}`,
+        text:'Your opponent is on another phone, and their move goes to the referee, not to you. So your page keeps asking the referee "anything new?" until the reply shows up. GET only reads, so asking again and again is safe.',
+        plain:`WHEN someone sends GET /games/{game}
+  game = the game named in the address
+  REPLY the current board  (200)`,
+        plainVars:[PV.game, ['200', 'A status code meaning "here you go".']],
+        fast:`@app.get("/games/{game_id}")
+async def get_game(game_id: str) -> GameState:
+    game = await games.get_or_404(game_id)
+    return game.state()`,
+        fastVars:[FV.game_id, FV.game],
+        status:'200 OK',
+        res:{move_number:ctx.ply + 1, turn:'white', last_move:ctx.reply || 'none yet'},
+        resNotes:{move_number:'One more move than before: your opponent has replied.', turn:'"white" means it is your turn again.', last_move:'Your opponent\'s reply, which the page now plays on your board.'}
+      }
+    }),
+    offerDraw: () => ({
+      title:'Offer draw', method:'POST', path:`/games/${GAME}/draw-offers`,
+      pathWhy:'Like a mailing address that gets more specific: all games, then this game, then its draw offers. You are adding one.',
+      find:{
+        plain:`WHEN someone sends POST /games/{game}/draw-offers
+  game   = the game named in the address
+  player = who sent it`,
+        plainVars:[PV.game, PV.player],
+        fast:`@app.post("/games/{game_id}/draw-offers",
+          status_code=201)
+async def offer_draw(
+    game_id: str,
+    me: Player = Depends(current_player),
+) -> DrawOffer:`,
+        fastVars:[FV.game_id, FV.me]
+      },
+      work:{
+        text:'The offer is saved as "waiting" until your opponent says yes or no, and the server lets their phone know.',
+        plain:`  look up game
+  offer = a new draw offer from player
+  save game
+  tell the opponent about offer
+  REPLY offer  (201)`,
+        plainVars:[['offer', 'A small record: who offered, and whether it is still waiting for an answer.']],
+        fast:`    game = await games.get_or_404(game_id)
+    offer = game.offer_draw(by=me.id)
+    await games.save(game)
+    await notify(game.opponent_of(me.id), offer)
+    return offer`,
+        fastVars:[FV.game, ['offer', 'A small record: who offered, and whether it is still waiting for an answer.'], ['notify', 'Sends a message to the opponent\'s phone.']]
+      },
+      status:'201 Created', statusWhy:'201 means "created": a new draw offer exists.',
+      res:{offer_id:'draw-offer-1', status:'waiting'},
+      resNotes:{offer_id:'A name for this offer, so the answer can point to it.', status:'"waiting" means no answer yet.'},
+      page:'The page shows "Draw offered" and waits for the answer.',
+      fake:'No one saw the offer. The page wrote "declined" by itself.'
+    }),
+    resign: () => ({
+      title:'Resign', method:'POST', path:`/games/${GAME}/resignation`,
+      pathWhy:'Like a mailing address that gets more specific: all games, then this game, then its resignation.',
+      find:{
+        plain:`WHEN someone sends POST /games/{game}/resignation
+  game   = the game named in the address
+  player = who sent it`,
+        plainVars:[PV.game, PV.player],
+        fast:`@app.post("/games/{game_id}/resignation",
+          status_code=201)
+async def resign(
+    game_id: str,
+    me: Player = Depends(current_player),
+) -> GameResult:`,
+        fastVars:[FV.game_id, FV.me]
+      },
+      work:{
+        text:'The game is marked as finished, and both ratings are updated here on the server. If the page did it, anyone could give themselves points.',
+        plain:`  look up game
+  end game: player's opponent wins
+  save game
+  update both players' ratings
+  REPLY the result  (201)`,
+        plainVars:[['ratings', 'Each player\'s skill score. Only the server changes them.']],
+        fast:`    game = await games.get_or_404(game_id)
+    result = game.resign(me.id)
+    await games.save(game)
+    await ratings.update(game)
+    return result`,
+        fastVars:[FV.game, ['result', 'Who won and how. Here: the opponent, by resignation.'], ['ratings.update', 'Recalculates both players\' ratings.']]
+      },
+      status:'201 Created', statusWhy:'201 means "created": the game now has a final result.',
+      res:{result:'0-1', reason:'resignation', rating_change:-8},
+      resNotes:{result:'"0-1" is how chess writes "the dark pieces won".', reason:'How the game ended.', rating_change:'Your rating goes down by 8 points.'},
+      page:'The page shows the result and your new rating.',
+      fake:'No result was saved and no rating changed.'
+    }),
+    rematch: () => ({
+      title:'Rematch', method:'POST', path:`/games/${GAME}/rematch`,
+      pathWhy:'Like a mailing address that gets more specific: all games, then this game, then a rematch of it.',
+      find:{
+        plain:`WHEN someone sends POST /games/{game}/rematch
+  game   = the game named in the address
+  player = who sent it`,
+        plainVars:[PV.game, PV.player],
+        fast:`@app.post("/games/{game_id}/rematch",
+          status_code=201)
+async def rematch(
+    game_id: str,
+    me: Player = Depends(current_player),
+) -> GameState:`,
+        fastVars:[FV.game_id, FV.me]
+      },
+      work:{
+        text:'A brand-new game is saved with its own name, so the old one stays in both players\' history.',
+        plain:`  look up the old game
+  new game = same two players, colors swapped
+  save new game
+  REPLY new game  (201)`,
+        plainVars:[['new game', 'A fresh game with its own name (you-vs-slowbishop-rematch). Colors swap so the other player starts.']],
+        fast:`    old = await games.get_or_404(game_id)
+    new = await games.create(
+        white=old.black, black=old.white
+    )
+    return new.state()`,
+        fastVars:[['old', 'The game that just ended.'], ['new', 'The fresh game, with colors swapped.']]
+      },
+      status:'201 Created', statusWhy:'201 means "created": a new game exists.',
+      res:{game_id:'you-vs-slowbishop-rematch', status:'waiting_for_opponent'},
+      resNotes:{game_id:'The new game\'s name. Every request about it will use it.', status:'Waiting for your opponent to accept.'},
+      page:'The page opens the new game and waits for your opponent to join.',
+      fake:'The page reset the same sample game. No new game exists.'
+    }),
+    chat: ctx => ({
+      title:'Send message', method:'POST', path:`/games/${GAME}/messages`,
+      pathWhy:'Like a mailing address that gets more specific: all games, then this game, then its messages. You are adding one.',
+      body:{text:ctx.text},
+      bodyNotes:{text:'Your message.'},
+      find:{
+        plain:`WHEN someone sends POST /games/{game}/messages
+  game   = the game named in the address
+  text   = the message sent
+  player = who sent it`,
+        plainVars:[PV.game, ['text', 'What you typed. The server checks the length itself, because limits on a page can be skipped.'], PV.player],
+        fast:`# The details the server expects
+class MessageIn(BaseModel):
+    text: str = Field(min_length=1,
+                      max_length=200)
+
+@app.post("/games/{game_id}/messages",
+          status_code=201)
+async def send_message(
+    game_id: str,
+    body: MessageIn,
+    me: Player = Depends(current_player),
+) -> Message:`,
+        fastVars:[FV.game_id, ['body', 'The message, checked against MessageIn: 1 to 200 characters, or FastAPI replies with an error.'], FV.me]
+      },
+      work:{
+        text:'The message is saved with the game, so it is still there if either player reloads, and passed on to your opponent.',
+        plain:`  IF text is empty or over 200 letters
+    REPLY "Message too long"  (422)
+  save text with game
+  pass it on to the opponent
+  REPLY the saved message  (201)`,
+        plainVars:[['422', 'An error code meaning "I understood you, but that isn\'t allowed".']],
+        fast:`    msg = await chat.add(game_id, me.id,
+                         body.text)
+    await notify_players(game_id, msg)
+    return msg`,
+        fastVars:[['msg', 'The saved message, with its own name.'], ['notify_players', 'Sends the message to everyone in the game.']]
+      },
+      status:'201 Created', statusWhy:'201 means "created": your message now exists on the server.',
+      res:{message_id:'message-1', from:'@you', text:ctx.text},
+      resNotes:{message_id:'A name for this message.', from:'Who sent it, filled in by the server from your sign-in pass.', text:'Your message, as saved.'},
+      page:'The page adds your message to the chat.',
+      fake:'The message only exists on this page. Your opponent never got it.'
+    }),
+    flipBoard: () => ({title:'Flip board', local:true}),
+    refreshLobby: () => ({
+      title:'Refresh tables', method:'GET', path:'/games?status=open&limit=3',
+      pathWhy:'/games means every game. Everything after the question mark narrows it down: status=open keeps only open games, and limit=3 means no more than 3.',
+      find:{
+        plain:`WHEN someone sends GET /games
+  status = "open"
+  limit  = 3`,
+        plainVars:[['status', 'Taken from ?status=open in the address: only games still looking for a player.'], ['limit', 'Taken from &limit=3: send back no more than 3.']],
+        fast:`@app.get("/games")
+async def list_games(
+    status: str = "open",
+    limit: int = 3,
+) -> list[GameSummary]:`,
+        fastVars:[['status', 'Filled in from ?status=open in the address.'], ['limit', 'Filled in from &limit=3.']]
+      },
+      work:{
+        text:'The server looks up every game that is still open. It only reads, so nothing is changed.',
+        plain:`  find games where status is open
+  keep the newest limit of them
+  REPLY the list  (200)`,
+        plainVars:[['200', 'A status code meaning "here you go".']],
+        fast:`    return await games.find(
+        status=status, limit=limit
+    )`,
+        fastVars:[['games.find', 'Searches the saved games using those two filters.']]
+      },
+      status:'200 OK', statusWhy:'The number is a quick status code. 200 means "here you go".',
+      res:TABLES.map(t => ({game_id:t.id, host:t.host})),
+      resNotes:{game_id:'Each table\'s game name. Pressing Join uses it.', host:'Who is waiting at that table.'},
+      page:'The page redraws the list of tables.',
+      fake:'The page reshuffled the same three sample tables.'
+    }),
+    join: ctx => ({
+      title:`Join ${ctx.host}'s table`, method:'POST', path:`/games/${ctx.game}/players`,
+      pathWhy:`Like a mailing address that gets more specific: all games, then that table's game (${ctx.game}), then its players. You are adding yourself.`,
+      find:{
+        plain:`WHEN someone sends POST /games/{game}/players
+  game   = the game named in the address
+  player = who sent it`,
+        plainVars:[['game', `Which table's game. {game} in the address is filled in with ${ctx.game}.`], PV.player],
+        fast:`@app.post("/games/{game_id}/players",
+          status_code=201)
+async def join_game(
+    game_id: str,
+    me: Player = Depends(current_player),
+) -> GameState:`,
+        fastVars:[['game_id', `Which table's game, filled in from the address: ${ctx.game}.`], FV.me]
+      },
+      work:{
+        text:'Two people can press Join at the same moment. Only the server sees both, so it decides who was first and tells the other one the seat is taken.',
+        plain:`  look up game
+  IF the seat is already taken
+    REPLY "Seat taken"  (409)
+  add player to game
+  save game
+  REPLY the game  (201)`,
+        plainVars:[['409', 'An error code meaning "that clashes with how things are right now": someone got there first.']],
+        fast:`    game = await games.get_or_404(game_id)
+    if game.is_full():
+        raise HTTPException(409, "Seat taken")
+    game.add_player(me.id)
+    await games.save(game)
+    return game.state()`,
+        fastVars:[FV.game, ['HTTPException', 'Stops right away and sends an error back to the page.']]
+      },
+      status:'201 Created', statusWhy:'201 means "created": you are now a player in that game.',
+      res:{game_id:ctx.game, status:'starting', black:'@you'},
+      resNotes:{game_id:'The game you just joined.', status:'"starting" means both seats are full.', black:'You play the dark pieces.'},
+      page:'The page takes you to the new game.',
+      fake:'There is no one at the table. The page just marked the seat taken.'
+    }),
+    saveSettings: ctx => ({
+      title:'Save settings', method:'PATCH', path:'/players/me',
+      pathWhy:'/players/me is your own profile. "me" means whoever is signed in, so the same address works for every player.',
+      body:ctx.changes,
+      bodyNotes:{display_name:'Your new name, sent only because you changed it.', piece_set:'Your new piece colors, sent only because you changed them.'},
+      find:{
+        plain:`WHEN someone sends PATCH /players/me
+  player  = who sent it ("me")
+  changes = only the fields that were sent`,
+        plainVars:[PV.player, ['changes', 'Just the settings you changed. Anything not sent stays as it was.']],
+        fast:`# Every field is optional, because
+# the page only sends what changed
+class SettingsPatch(BaseModel):
+    display_name: str | None = Field(
+        None, min_length=3, max_length=20)
+    piece_set: Literal[
+        "tangerine", "coconut", "mint"
+    ] | None = None
+
+@app.patch("/players/me")
+async def update_me(
+    body: SettingsPatch,
+    me: Player = Depends(current_player),
+) -> Player:`,
+        fastVars:[['body', 'The changes that were sent, checked against SettingsPatch.'], FV.me]
+      },
+      work:{
+        text:'Only what you changed is updated. Your rating and past games stay as they are.',
+        plain:`  IF the new name isn't 3 to 20 letters
+    REPLY "Name must be 3 to 20 letters"  (422)
+  update player with changes
+  REPLY the updated profile  (200)`,
+        plainVars:[['422', 'An error code meaning "I understood you, but that isn\'t allowed".'], ['200', 'A status code meaning "done".']],
+        fast:`    changes = body.model_dump(
+        exclude_unset=True)
+    return await players.update(
+        me.id, changes)`,
+        fastVars:[['changes', 'Only the fields the page actually sent. exclude_unset=True leaves out everything else.'], ['players.update', 'Saves those changes to your profile.']]
+      },
+      status:'200 OK', statusWhy:'The number is a quick status code. 200 means "done", and your updated profile comes back.',
+      res:{id:'you', display_name:ctx.name, piece_set:ctx.set, rating:1180},
+      resNotes:{id:'Who this profile belongs to.', display_name:'Your name, as saved.', piece_set:'Your piece colors, as saved.', rating:'Unchanged, because it wasn\'t sent.'},
+      page:'The page shows "Saved" and recolors your pieces.',
+      fake:'The change only lives on this page. Reload and it is gone.'
+    })
+  };
+  const METHOD_WHY = {
+    GET:'GET means "show me". It only reads, so asking twice is safe.',
+    POST:'POST means "make something new".',
+    PATCH:'PATCH means "change part of something".'
+  };
+
+  /* ---------- small highlighters for the code blocks ---------- */
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const hl = (re, cls) => src => {
+    let out = '', last = 0;
+    src.replace(re, (...a) => {
+      const m = a[0], i = a[a.length - 2], g = a.slice(1, -2);
+      out += esc(src.slice(last, i)) + `<span class="${cls[g.findIndex(x => x !== undefined)]}">${esc(m)}</span>`;
+      last = i + m.length; return m;
+    });
+    return out + esc(src.slice(last));
+  };
+  const py = hl(/(#.*$)|("(?:[^"\\]|\\.)*")|(@\w+(?:\.\w+)*)|\b(async|def|return|await|if|raise|class|not|None|True|False)\b|\b(\d+)\b/gm, ['c', 's', 'd', 'k', 'n']);
+  const pseudo = hl(/("[^"]*")|\b(WHEN|IF|REPLY)\b|(\(\d{3}\))|((?:GET|POST|PATCH) \S+)/g, ['s', 'k', 'n', 'd']);
+  const json1 = v => esc(JSON.stringify(v));
+
+  /* a list of lines, each with a plain explanation underneath */
+  const anatomy = rows => `<dl class="anatomy">${rows.map(([code, what]) => `<div><dt><code>${esc(code)}</code></dt><dd>${esc(what)}</dd></div>`).join('')}</dl>`;
+  const fields = (obj, notes) => anatomy(Object.entries(obj).map(([k, v]) => [`"${k}": ${JSON.stringify(v)}`, (notes && notes[k]) || '']));
+  const names = rows => rows && rows.length ? `<p class="code-cap">What the names mean</p>${anatomy(rows)}` : '';
+
+  /* code style: plain steps by default, real FastAPI on request (remembered per browser) */
+  let codeStyle = store.get('pp-code') === 'fastapi' ? 'fastapi' : 'plain';
+  const codeBlock = part => {
+    const fast = codeStyle === 'fastapi';
+    return `<button class="code-toggle" type="button" aria-pressed="${fast}">${fast ? 'Show plain steps instead' : 'Show the real FastAPI code'}</button>
+      <pre class="code ${fast ? '' : 'plain'}" tabindex="0">${fast ? py(part.fast) : pseudo(part.plain)}</pre>
+      ${names(fast ? [...part.fastVars, ...fastExtras(part.fast)] : part.plainVars)}`;
+  };
+  /* FastAPI-only names that appear in many routes */
+  const fastExtras = src => {
+    const rows = [], sc = src.match(/status_code=(\d+)/), ret = src.match(/-> ([\w\[\]]+):/);
+    if (sc) rows.push([`status_code=${sc[1]}`, `The success code to send back when everything works: ${sc[1]}.`]);
+    if (ret) rows.push([`-> ${ret[1]}`, `Describes the shape of the reply, so FastAPI can check it and document it.`]);
+    return rows;
+  };
+
+  /* ---------- the walkthrough: one step of the cycle at a time ---------- */
+  const cycleHTML = `
+    <div class="cycle" aria-hidden="true">
+      <span class="arr top a1"><span class="l">Request</span><i><span class="run"><b class="pkt"></b></span></i></span><span class="arr top a2"><span class="l">Look up</span><i><span class="run"><b class="pkt"></b></span></i></span>
+      <span class="node n-browser">Browser<small>your page</small></span><span class="node n-server">Server<small>backend code</small></span><span class="node n-db">Database<small>saved data</small></span>
+      <span class="arr bot a4"><i><span class="run"><b class="pkt"></b></span></i><span class="l">Response</span></span><span class="arr bot a3"><i><span class="run"><b class="pkt"></b></span></i><span class="l">Result</span></span>
+    </div>`;
+  /* on: what lights up. at: when each part's animation starts (seconds), so a step plays in order. */
+  const buildSteps = d => {
+    if (d.local) return [{on:['n-browser'], at:{}, off:['n-server', 'n-db'], local:true, h:'Handled on your page',
+      html:() => `<p class="step-text">No request. Turning the board around only changes what you see, so your page does it alone and nothing goes to the server.</p>
+            <p class="step-text">Not every button needs a backend. Only the ones that save something or involve other players do: moves, offers, chat, the lobby and your profile.</p>`}];
+    const methodLine = `${d.method} ${d.path}`;
+    const steps = [
+      {on:['n-browser'], at:{}, h:'Your page writes the request',
+        html:() => `${d.analogy ? `<p class="step-text analogy">${esc(d.analogy)}</p>` : ''}
+              <p class="step-text">${esc(METHOD_WHY[d.method])} ${esc(d.pathWhy)}</p>
+              <div class="req-line"><span class="verb">${d.method}</span><span>${esc(d.path)}</span></div>
+              ${d.body && Object.keys(d.body).length ? `<p class="code-cap">The details it sends along</p>${fields(d.body, d.bodyNotes)}`
+                : d.body ? `<p class="step-text">Nothing changed, so there are no details to send.</p>`
+                : `<p class="step-text">No extra details needed. The address says which game, and your sign-in pass says who you are.</p>`}`},
+      {on:['a1'], at:{a1:0}, h:'The request travels to the server',
+        html:() => `<p class="step-text">This is the actual message that goes over the internet. Here is what each line does:</p>
+              ${anatomy([
+                [methodLine, `What to do, and where. ${METHOD_WHY[d.method].split('.')[0]}, at the address ${d.path.split('?')[0]}.`],
+                ['Host: api.pocketpawns.example', 'Which server should get the message, like the building name on an envelope. This one is a made-up address.'],
+                ['Authorization: (your sign-in pass)', 'Proves who you are, like a wristband at an event. It is how the server knows who sent this.'],
+                ...(d.body && Object.keys(d.body).length ? [[JSON.stringify(d.body), 'The details from step 1, packed up to travel.']] : [])
+              ])}`},
+      {on:['n-server'], at:{'n-server':0}, h:'The server finds the right instructions',
+        html:() => `<p class="step-text">${codeStyle === 'fastapi'
+                ? 'In FastAPI, each address is a Python function marked with @app.post, @app.get or @app.patch. The server runs the one whose address matches.'
+                : 'The server keeps a list of addresses it can answer, each with its own instructions. It finds the one that matches and fills in the names below.'}${d.body ? ' It also checks the details are in the right shape. If they aren\'t, it sends back an error straight away.' : ''}</p>
+              ${codeBlock(d.find)}`},
+      {on:['n-server', 'a2', 'n-db', 'a3'], at:{'n-server':0, a2:0, 'n-db':1, a3:1}, h:'The server does the work',
+        html:() => `<p class="step-text">${esc(d.work.text)}</p>${codeBlock(d.work)}`},
+      {on:['a4'], at:{a4:0}, h:'The server replies',
+        html:() => `<p class="step-text">${esc(d.statusWhy)}</p>
+              <span class="status-code">${esc(d.status)}</span>
+              <p class="code-cap">The details that come back</p>
+              ${Array.isArray(d.res) ? `<pre class="code plain" tabindex="0">${esc(JSON.stringify(d.res, null, 1))}</pre>${anatomy(Object.entries(d.resNotes).map(([k, v]) => [`"${k}"`, v]))}` : fields(d.res, d.resNotes)}`},
+      {on:['n-browser'], at:{}, h:'Your page updates',
+        html:() => `<p class="step-text">${esc(d.page)}</p>
+              <p class="fake"><b>In this concept:</b> ${esc(d.fake)}</p>`}
+    ];
+    if (d.follow) {
+      const f = d.follow;
+      steps.push({on:['a1', 'n-server', 'a4'], at:{a1:0, 'n-server':.9, a4:1}, h:f.title,
+        html:() => `<p class="step-text">${esc(f.text)}</p>
+              <div class="req-line"><span class="verb">${f.method}</span><span>${esc(f.path)}</span></div>
+              ${codeBlock(f)}
+              <span class="status-code">${esc(f.status)}</span>
+              <p class="code-cap">The details that come back</p>
+              ${fields(f.res, f.resNotes)}`});
+    }
+    return steps;
+  };
+  const renderWalk = (host, d, mode, flipId) => {
+    const steps = buildSteps(d);
+    let i = 0;
+    host.innerHTML = `
+      <div class="walk-top"><span class="for">${esc(d.title)}</span><span class="tag">Mock-up: no server yet</span></div>
+      <div class="walk-body">
+        ${cycleHTML}
+        <div class="step-meta"><span class="count"></span><span class="dots" aria-hidden="true">${steps.map(() => '<i></i>').join('')}</span><button class="replay-anim" type="button">Play again</button></div>
+        <h3 class="step-h" tabindex="-1"></h3>
+        <div class="step-content"></div>
+        <div class="step-nav">
+          ${mode === 'flip' ? `<button class="btn small" type="button" data-flipback="${flipId}">Flip back</button>` : ''}
+          <span class="pager">
+            <button class="btn small s-back" type="button">Back</button>
+            <button class="btn primary small s-next" type="button">Next step</button>
+          </span>
+        </div>
+      </div>`;
+    const cycle = $('.cycle', host), backB = $('.s-back', host), nextB = $('.s-next', host), content = $('.step-content', host);
+    const animate = () => { cycle.classList.remove('play'); void cycle.offsetWidth; cycle.classList.add('play'); };
+    const show = (n, focus) => {
+      i = n; const s = steps[i];
+      cycle.classList.toggle('local', !!s.local);
+      $$('.node, .arr', cycle).forEach(el => {
+        const k = [...el.classList].find(c => /^(n-|a\d)/.test(c));
+        const on = s.on.includes(k);
+        el.classList.toggle('on', on);
+        el.classList.toggle('off', !!(s.off && s.off.includes(k)));
+        el.style.setProperty('--d', on && s.at[k] ? s.at[k] + 's' : '0s');
+      });
+      $('.count', host).textContent = `Step ${i + 1} of ${steps.length}`;
+      $$('.dots i', host).forEach((dot, j) => { dot.className = j < i ? 'done' : j === i ? 'now' : ''; });
+      $('.step-h', host).textContent = s.h;
+      content.innerHTML = s.html();
+      content.classList.remove('enter'); void content.offsetWidth; content.classList.add('enter');
+      backB.hidden = i === 0 || steps.length === 1;
+      nextB.hidden = i === steps.length - 1;
+      animate();
+      if (focus) $('.step-h', host).focus({preventScroll:false});
+    };
+    backB.addEventListener('click', () => show(Math.max(0, i - 1), true));
+    nextB.addEventListener('click', () => show(Math.min(steps.length - 1, i + 1), true));
+    $('.replay-anim', host).addEventListener('click', animate);
+    content.addEventListener('click', e => {
+      if (!e.target.closest('.code-toggle')) return;
+      codeStyle = codeStyle === 'fastapi' ? 'plain' : 'fastapi';
+      store.set('pp-code', codeStyle);
+      content.innerHTML = steps[i].html();
+      $('.code-toggle', content).focus();
+    });
+    show(0, false);
+  };
+
+  /* ---------- flip cards ---------- */
+  let lastTrigger = null;
+  const DUR = () => reduceMotion.matches ? 220 : 440;
+  const flipTo = (flipId, d, trigger) => {
+    const f = $('#' + flipId), front = $('.front', f), back = $('.back', f);
+    lastTrigger = trigger;
+    renderWalk(back, d, 'flip', flipId);
+    back.hidden = false; back.inert = false;
+    void back.offsetWidth;
+    f.classList.add('flipped');
+    front.inert = true;
+    const top = f.getBoundingClientRect().top, headH = head.offsetHeight;
+    if (top < headH || top > innerHeight * 0.55) f.scrollIntoView({block:'start'});
+    setTimeout(() => $('.step-h', back).focus({preventScroll:true}), 60);
+  };
+  const flipBack = (flipId, restoreFocus = true) => {
+    const f = $('#' + flipId); if (!f.classList.contains('flipped')) return;
+    const front = $('.front', f), back = $('.back', f);
+    f.classList.remove('flipped'); front.inert = false; back.inert = true;
+    setTimeout(() => { if (!f.classList.contains('flipped')) back.hidden = true; }, DUR());
+    if (restoreFocus) {
+      const target = lastTrigger && document.contains(lastTrigger) && !lastTrigger.disabled ? lastTrigger : $('button:not([disabled])', front);
+      if (target) target.focus();
+    }
+  };
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-flipback]');
+    if (b) flipBack(b.dataset.flipback);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || !e.target.closest) return;
+    const f = e.target.closest('.flipper.flipped');
+    if (f) flipBack(f.id);
+  });
+
+  /* ---------- dock on the left (desktop only) ---------- */
+  let dockPref = store.get('pp-dock') === 'on';
+  const pinBtn = $('#pinBtn');
+  const dockOn = () => document.body.classList.contains('dock-on');
+  const syncDock = () => {
+    const on = reqsOn() && dockPref && wide.matches;
+    document.body.classList.toggle('dock-on', on);
+    pinBtn.setAttribute('aria-pressed', String(dockPref));
+    if (on) $$('.flipper.flipped').forEach(f => flipBack(f.id, false));
+    syncHead();
+  };
+  pinBtn.addEventListener('click', () => { dockPref = !dockPref; store.set('pp-dock', dockPref ? 'on' : 'off'); syncDock(); });
+  $('#unpin').addEventListener('click', () => { dockPref = false; store.set('pp-dock', 'off'); syncDock(); pinBtn.focus(); });
+  wide.addEventListener('change', syncDock);
+  const showInDock = d => {
+    $('#dockEmpty').hidden = true;
+    const w = $('#dockWalk'); w.hidden = false;
+    renderWalk(w, d, 'dock');
+    w.scrollTop = 0; $('#dock').scrollTop = 0;
+    $('#dockLive').textContent = `Backend view: ${d.title}`;
+  };
+
+  /* ---------- the switch ---------- */
+  const sw = $('#reqSwitch');
+  const setReqs = on => {
+    sw.setAttribute('aria-checked', String(on));
+    document.body.classList.toggle('reqs', on);
+    if (!on) $$('.flipper.flipped').forEach(f => flipBack(f.id, false));
+    syncDock();
+  };
+  sw.addEventListener('click', () => setReqs(sw.getAttribute('aria-checked') !== 'true'));
+
+  const showReq = (btn, key, ctx = {}) => {
+    const d = REQ[key](ctx);
+    if (!d.local) logReq(d.method, d.path);
+    if (!reqsOn()) return;
+    if (dockOn()) showInDock(d);
+    else flipTo(btn.dataset.flip, d, btn);
+  };
+
+  /* ---------- wire up actions ---------- */
+  const goPlay = () => $('#play').scrollIntoView({behavior: reduceMotion.matches ? 'auto' : 'smooth', block:'start'});
+  $('#findMatch').addEventListener('click', e => {
+    resetGame();
+    status('Sample match found: @slowbishop. The pairing is scripted, so nobody real was found.');
+    showReq(e.currentTarget, 'findMatch');
+    if (!reqsOn() || dockOn()) { goPlay(); $('#nextMove').focus({preventScroll:true}); }
+  });
+  $('#nextMove').addEventListener('click', e => {
+    if (busy || over) return;
+    const m = SCRIPT[ply], r = SCRIPT[ply + 1];
+    const ctx = {uci: m.from + m.to, ply: ply + 1, reply: r ? r.from + r.to : null};
+    showReq(e.currentTarget, 'move', ctx); nextMove();
+  });
+  $('#offerDraw').addEventListener('click', e => {
+    drawOffered = true; syncButtons();
+    status('Draw offered. @slowbishop declined. That reply is scripted.');
+    showReq(e.currentTarget, 'offerDraw');
+  });
+  $('#rematch').addEventListener('click', e => {
+    resetGame(); status('New sample game. Your move.');
+    showReq(e.currentTarget, 'rematch');
+  });
+  $('#resignYes').addEventListener('click', e => {
+    closeConfirm(); finish('You resigned. @slowbishop wins the sample game.');
+    showReq(e.currentTarget, 'resign');
+    if (!reqsOn() || dockOn()) $('#rematch').focus();
+  });
+  $('#flipBoard').addEventListener('click', e => {
+    flipped = !flipped; drawCoords(); pieces.forEach(p => { if (!p.gone) place(p); }); highlight(lastFrom, lastTo);
+    showReq(e.currentTarget, 'flipBoard');
+  });
+
+  const clearErr = (input, err) => { input.removeAttribute('aria-invalid'); err.classList.remove('show'); err.textContent = ''; };
+  const setErr = (input, err, msg) => { input.setAttribute('aria-invalid', 'true'); err.textContent = msg; err.classList.add('show'); };
+
+  const chatForm = $('#chatForm'), chatInput = $('#chatInput'), chatErr = $('#chatErr');
+  chatInput.addEventListener('input', () => { if (chatInput.value.trim()) clearErr(chatInput, chatErr); });
+  chatForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const text = chatInput.value.trim();
+    if (!text) { setErr(chatInput, chatErr, 'Type a message first.'); chatInput.focus(); return; }
+    clearErr(chatInput, chatErr);
+    addChat('@you', text, true); chatInput.value = '';
+    showReq(e.submitter || $('button[type=submit]', chatForm), 'chat', {text});
+  });
+
+  $('#tables').addEventListener('click', e => {
+    const btn = e.target.closest('[data-req="join"]'); if (!btn) return;
+    btn.closest('.table').querySelector('.seat-note').textContent = 'Seat taken. This table is a sample, so nobody is there.';
+    btn.disabled = true;
+    showReq(btn, 'join', {game: btn.dataset.game, host: btn.dataset.host});
+  });
+  $('#refreshLobby').addEventListener('click', e => {
+    tableOrder = tableOrder.slice(1).concat(tableOrder[0]);
+    renderTables(tableOrder);
+    $('#lobbyStatus').textContent = 'Tables refreshed. They are the same three samples.';
+    showReq(e.currentTarget, 'refreshLobby');
+  });
+
+  const settings = $('#settingsForm'), nameInput = $('#nameInput'), nameErr = $('#nameErr'), saveOk = $('#saveOk');
+  const nameOk = v => /^[A-Za-z0-9_]{3,20}$/.test(v);
+  nameInput.addEventListener('input', () => { saveOk.classList.remove('show'); if (nameOk(nameInput.value.trim())) clearErr(nameInput, nameErr); });
+  settings.addEventListener('change', () => saveOk.classList.remove('show'));
+  settings.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = nameInput.value.trim();
+    if (!nameOk(name)) {
+      setErr(nameInput, nameErr, name.length < 3 ? 'Use at least 3 characters.' : 'Use only letters, numbers and underscores.');
+      nameInput.focus(); return;
+    }
+    clearErr(nameInput, nameErr);
+    const set = new FormData(settings).get('piece_set') || pieceSet;
+    const changes = {};
+    if (name !== saved.display_name) changes.display_name = name;
+    if (set !== saved.piece_set) changes.piece_set = set;
+    saved.display_name = name; saved.piece_set = set;
+    applySet(set);
+    $('#displayName').textContent = '@' + name;
+    saveOk.classList.add('show');
+    showReq(e.submitter || $('button[type=submit]', settings), 'saveSettings', {name, set, changes});
+  });
+
+  /* ---------- intro modal: first visit only ---------- */
+  const intro = $('#intro');
+  const closeIntro = () => { store.set('pp-intro', 'seen'); intro.close(); };
+  $('#introLater').addEventListener('click', closeIntro);
+  $('#introOn').addEventListener('click', () => {
+    closeIntro(); setReqs(true); goPlay(); $('#nextMove').focus({preventScroll:true});
+  });
+  intro.addEventListener('cancel', () => store.set('pp-intro', 'seen'));
+  $('#openIntro').addEventListener('click', () => intro.showModal());
+  if (store.get('pp-intro') !== 'seen' && intro.showModal) intro.showModal();
+
+  /* ---------- start ---------- */
+  drawCoords(); setup(); renderClocks(); syncButtons(); syncDock();
+})();
+</script>
+</body>
+</html>
